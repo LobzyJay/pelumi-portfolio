@@ -1,0 +1,83 @@
+---
+// Focus areas as one run-on line of bold type.
+//
+// The band sits on the page ground (bone) — no colour of its own. That is
+// what makes the grey ramp work: orange sat *between* bone and ink in
+// luminance, so any grey moved toward the background and died there (a
+// mid-grey measured 1.5:1). Against bone the ramp has the full range, and
+// every tone below clears 4.5:1 — the *body* floor, never mind the 3:1
+// large-text one.
+//
+// The band draws no rules of its own: Proof above already closes on a
+// full-width rule, and Highlights below opens on its own heading and rule.
+// Bounding this section too would have doubled both lines.
+//
+// Two constraints this layout must keep, both learned the hard way:
+//   - no `max-width` in ch on the run, and
+//   - no `overflow-wrap: break-word`
+// Together they chopped words mid-stem ("INTERNATIO / NAL"). The 23px floor
+// on the clamp is what makes "INTERNATIONAL" fit a 335px column at 375px, so
+// nothing needs to break in the first place.
+import { focusAreasShort } from '../../data/rooms';
+
+const areas = focusAreasShort();
+const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const count = words[areas.length] ?? String(areas.length);
+
+// Four tones cycling over nine areas: the cycle never divides the run evenly,
+// so no tone lands twice in a row and the depth reads as depth rather than as
+// a stripe pattern.
+const tones = ['is-t0', 'is-t1', 'is-t2', 'is-t3'];
+---
+
+<section class="sg-focus sg-band sg-band--bone">
+  <div class="sg-focus__head">
+    <span class="sg-mono">Focus areas</span>
+    <span class="sg-mono"><span class="sg-focus__count">{count}</span>, in three groups</span>
+  </div>
+
+  <h2 class="sg-focus__run">
+    {areas.map((area, i) => (
+      <>
+        <span class="sg-focus__area" class:list={[tones[i % tones.length]]}>{area}</span>
+        {i < areas.length - 1 && <span class="sg-focus__sep" aria-hidden="true">/</span>}
+      </>
+    ))}
+  </h2>
+</section>
+
+<style>
+  .sg-focus__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    /* A tone from the ramp rather than opacity: at 11px the head still has
+       to clear the small-text floor, and 0.6 opacity would not. */
+    color: #57503f;
+    padding-bottom: clamp(24px, 3vw, 40px);
+  }
+  .sg-focus__count { color: var(--sg-ink); }
+
+  .sg-focus__run {
+    font-size: clamp(23px, 4.6vw, 64px);
+    font-weight: 800;
+    font-stretch: 88%;
+    text-transform: uppercase;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
+
+  /* Measured against bone #f7f4ec: 16.9 / 11.1 / 7.3 / 5.3. */
+  .sg-focus__area.is-t0 { color: #14130f; }
+  .sg-focus__area.is-t1 { color: #3a352c; }
+  .sg-focus__area.is-t2 { color: #57503f; }
+  .sg-focus__area.is-t3 { color: #6b6459; }
+
+  /* Decorative and aria-hidden, so it may sit below the text tones. */
+  .sg-focus__sep {
+    color: #8d8577;
+    padding-inline: 0.18em;
+  }
+</style>

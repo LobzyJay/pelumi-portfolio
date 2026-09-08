@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { docs: CollectionEntry<'work'>[] }
+const { docs } = Astro.props;
+---
+
+{docs.length > 0 && (
+  <div class="related">
+    <p class="mono related__label">Related work</p>
+    <div class="related__grid grid-12">
+      {docs.map((doc) => (
+        <a href={`/work/${doc.id}/`} class="related__item col-span-6">
+          <span class="mono">{String(doc.data.order).padStart(2, '0')} · {doc.data.format}</span>
+          <span class="related__title">{doc.data.title}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+)}
+
+<style>
+  .related { margin-top: var(--space-xl); border-top: 1px solid var(--rule); padding-top: var(--space-lg); }
+  .related__label { color: var(--ink-soft); margin-bottom: var(--space-sm); }
+  .related__grid { row-gap: var(--space-md); }
+  .related__item { display: flex; flex-direction: column; gap: 8px; }
+  .related__item .mono { color: var(--ink-soft); }
+  .related__title {
+    font-size: var(--size-h3);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    transition: color var(--dur-ui) var(--ease-reveal);
+  }
+  .related__item:hover .related__title,
+  .related__item:focus-visible .related__title { color: var(--accent); }
+  @media (max-width: 640px) {
+    .related__grid { grid-template-columns: 1fr; }
+  }
+</style>

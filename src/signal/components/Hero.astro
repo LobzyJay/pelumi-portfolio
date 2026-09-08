@@ -1,0 +1,115 @@
+---
+// Ink hero. The name is one size across both lines, centred, sized so the
+// longer line fills the column — and the portrait sits on top of it as a
+// small tilted card at the seam between the lines. That overlap is the
+// signature move of this direction: the person interrupting the type.
+import { Image } from 'astro:assets';
+import portrait from '../../assets/photos/hero-portrait.jpg';
+import { site } from '../../data/site';
+
+const [first, ...rest] = site.name.split(' ');
+const last = rest.join(' ');
+---
+
+<header class="sg-hero sg-band--ink">
+  <div class="sg-hero__name-wrap">
+    <div class="sg-hero__name sg-display" data-fit-container data-fit-ref="200">
+      <span data-fit-line>{first}</span>
+      <span data-fit-line>{last}</span>
+    </div>
+    <figure class="sg-hero__portrait">
+      <Image src={portrait} alt={site.name} width={340} height={400} />
+    </figure>
+  </div>
+
+  <div class="sg-hero__bar grid-12">
+    <p class="sg-title sg-hero__positioning col-span-7">{site.positioning}</p>
+    <div class="sg-hero__aside col-span-5">
+      <p class="sg-mono sg-hero__meta">
+        {site.degree.program === 'Master of Global Policy Studies' ? 'MGPS' : site.degree.program}, LBJ School of Public Affairs<br />
+        Washington, D.C.
+      </p>
+      <a href="#work" class="sg-pill sg-pill--accent sg-hero__cta">Selected work →</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* The hero always fills the first screen, whatever the content does to its
+     height — so the ink runs to the fold and never leaves a strip of bone
+     under it. 100dvh (not vh) so mobile browser chrome collapsing doesn't
+     jump the layout. The nav sits above, hence subtracting its height. */
+  .sg-hero {
+    background: var(--sg-ink);
+    color: var(--sg-bone);
+    padding: clamp(40px, 6vw, 84px) var(--gutter) var(--sg-band);
+    min-height: calc(100dvh - var(--sg-nav-h));
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The name takes the slack and stays optically centred; the bar holds the
+     floor. Between them the hero absorbs any viewport height. */
+  .sg-hero__name-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .sg-hero__name {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .sg-hero__name [data-fit-line] {
+    white-space: nowrap;
+    font-size: 200px;
+  }
+
+  /* The overlap. Anchored to the seam between the two lines and nudged off
+     centre so it breaks a letter rather than sitting symmetrically. */
+  .sg-hero__portrait {
+    position: absolute;
+    left: 47%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(4deg);
+    width: clamp(88px, 8.5vw, 122px);
+    background: var(--sg-bone);
+    padding: 6px;
+  }
+  .sg-hero__portrait :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 4.6;
+    object-fit: cover;
+    object-position: 50% 12%;
+  }
+
+  .sg-hero__bar {
+    margin-top: clamp(32px, 4vw, 56px);
+    align-items: end;
+  }
+  .sg-hero__positioning { font-size: clamp(22px, 2.3vw, 32px); max-width: 22ch; }
+  .sg-hero__aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+    text-align: right;
+  }
+  .sg-hero__meta { opacity: 0.75; }
+
+  @media (max-width: 640px) {
+    .sg-hero__portrait { width: 72px; left: 50%; }
+    .sg-hero__bar { row-gap: 24px; }
+    .sg-hero__aside { align-items: flex-start; text-align: left; }
+  }
+</style>
+
+<script>
+  import { initSignalFit } from '../fit';
+  initSignalFit();
+</script>

@@ -1,0 +1,111 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import CaseHeader from '../../components/CaseHeader.astro';
+import HonestyLabel from '../../components/HonestyLabel.astro';
+import Recommendation from '../../components/Recommendation.astro';
+import OptionsGrid from '../../components/OptionsGrid.astro';
+import DocumentPreview from '../../components/DocumentPreview.astro';
+import Related from '../../components/Related.astro';
+import PrevNext from '../../components/PrevNext.astro';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('work');
+  return docs.map((doc) => ({ params: { slug: doc.id }, props: { doc } }));
+}
+
+const { doc } = Astro.props;
+const { Content } = await render(doc);
+const d = doc.data;
+
+const allDocs = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const total = allDocs.length;
+const currentIndex = allDocs.findIndex((x) => x.id === doc.id);
+const prev = allDocs[(currentIndex - 1 + total) % total];
+const next = allDocs[(currentIndex + 1) % total];
+
+const related = allDocs
+  .filter((x) => x.id !== doc.id && x.data.focusAreas.some((fa) => d.focusAreas.includes(fa)))
+  .slice(0, 2);
+
+const roomClass = d.room === 'technology' ? 'room-sage' : d.room === 'people' ? 'room-clay' : 'room-sky';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: d.title,
+  author: [{ '@type': 'Person', name: 'Pelumi Igbalajobi' }, ...d.coauthors.map((c) => ({ '@type': 'Person', name: c }))],
+  datePublished: d.date.toISOString().slice(0, 10),
+  about: d.focusAreas,
+  ...(d.pdf ? { url: d.pdf } : {}),
+};
+---
+
+<Base title={d.title} description={d.question} jsonLd={jsonLd}>
+  <div class={`case-band ${roomClass}`}></div>
+  <Nav />
+  <main id="main" class="wrap case-study">
+    <CaseHeader doc={doc} />
+    {d.label === 'academic' && <HonestyLabel />}
+
+    <h1 class="case-study__question" data-reveal data-reveal-group="case" data-reveal-order="0">{d.question}</h1>
+
+    <Recommendation text={d.recommendation} />
+
+    <div class="case-study__context" data-reveal data-reveal-group="case" data-reveal-order="2">
+      <p class="mono case-study__context-label">Context</p>
+      <div class="case-study__prose"><Content /></div>
+    </div>
+
+    {d.options && <OptionsGrid options={[...d.options]} />}
+
+    <div class="case-study__shows" data-reveal data-reveal-group="case" data-reveal-order="3">
+      <p class="mono case-study__context-label">What this shows</p>
+      <ul class="case-study__shows-list">
+        {d.shows.map((s) => <li>{s}</li>)}
+      </ul>
+    </div>
+
+    <DocumentPreview doc={doc} />
+
+    <Related docs={related} />
+
+    <PrevNext prev={prev} next={next} total={total} />
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .case-band { height: 6px; }
+  .case-study { padding-block: var(--space-xl) var(--space-3xl); max-width: 900px; }
+  .case-study__question {
+    font-size: var(--size-h1);
+    letter-spacing: -0.025em;
+    line-height: 1;
+    margin-top: var(--space-lg);
+    max-width: 20ch;
+  }
+  .case-study__context { margin-top: var(--space-xl); max-width: 62ch; }
+  .case-study__context-label { color: var(--ink-soft); margin-bottom: var(--space-sm); }
+  .case-study__prose { font-size: var(--size-body); line-height: 1.55; }
+  .case-study__prose :global(p + p) { margin-top: 1em; }
+  .case-study__shows { margin-top: var(--space-xl); }
+  .case-study__shows-list { display: flex; flex-direction: column; gap: 10px; }
+  .case-study__shows-list li {
+    padding-left: 20px;
+    position: relative;
+    font-size: var(--size-small);
+    line-height: 1.5;
+  }
+  .case-study__shows-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+  }
+</style>

@@ -1,0 +1,114 @@
+/* Design tokens — Atlas direction.
+   Source: design_handoff_pelumi_site/README.md §A1.
+   oklch is the source of truth; hex fallbacks sit in a @supports-gated block
+   below for browsers without oklch() support. */
+
+:root {
+  /* ---- type ---- */
+  --font-sans: 'Familjen Grotesk', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* modular scale, desktop clamps (README §A1 "Scale") */
+  --size-name: clamp(64px, 8.5vw, 128px);
+  --size-room-title: clamp(44px, 5vw, 76px);
+  --size-h1: clamp(2.75rem, 6vw, 5rem);
+  --size-h2: clamp(1.75rem, 3.5vw, 3rem);
+  --size-h3: clamp(1.25rem, 2vw, 1.75rem);
+  --size-doc-title: clamp(20px, 1.8vw, 26px);
+  --size-body: clamp(1.0625rem, .5vw + .75rem, 1.1875rem);
+  --size-small: 15px;
+  --size-label: clamp(.6875rem, .3vw + .5rem, .8125rem);
+
+  /* ---- colour (oklch) ---- */
+  --sand: oklch(0.955 0.02 85);
+  --sand-2: oklch(0.93 0.004 90);
+  --ink: oklch(0.24 0.02 160);
+  --ink-soft: oklch(0.5 0.02 160);
+  --ink-faint: oklch(0.6 0.01 60);
+
+  --room-sage: oklch(0.86 0.06 150);
+  --room-sage-ink: oklch(0.35 0.03 150);
+  --room-clay: oklch(0.86 0.08 55);
+  --room-clay-ink: oklch(0.4 0.06 50);
+  --room-sky: oklch(0.86 0.05 230);
+  --room-sky-ink: oklch(0.38 0.05 230);
+
+  --accent: oklch(0.62 0.14 40);
+  --accent-ink: oklch(0.98 0.01 85);
+  --forest: oklch(0.3 0.04 160);
+  --forest-soft: oklch(0.75 0.04 150);
+  --paper: oklch(0.975 0.01 85);
+
+  --rule: oklch(0.24 0.02 160 / 0.15);
+  --rule-strong: oklch(0.24 0.02 160 / 0.35);
+
+  /* isometric drawing faces (see src/components/Platform.astro) */
+  --iso-top: #f6f1e6;
+  --iso-top-hi: #f3d3bf;
+  --iso-left: #e4dccb;
+  --iso-left-hi: #e6b899;
+  --iso-stroke: #1f2a24;
+
+  /* ---- radii ---- */
+  /* Documents, folders and rooms stay sharp — that's the memo device.
+     Photography and small accent marks get a soft, squircle-like radius so
+     the person behind the memos still feels warm, not just architectural. */
+  --radius-pill: 999px;
+  --radius-sm: 4px;
+  --radius-md: 14px;
+  --radius-lg: 28px;
+  --radius-none: 0;
+
+  /* ---- spacing (8px baseline) ---- */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+  --space-2xl: 104px;
+  --space-3xl: 168px;
+  --gutter: clamp(20px, 3vw, 48px);
+
+  /* ---- motion ---- */
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-overlay: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur-micro: 150ms;
+  --dur-ui: 250ms;
+  --dur-reveal: 600ms;
+  --dur-overlay: 600ms;
+
+  color-scheme: light;
+}
+
+/* Hex fallbacks for browsers without oklch() support. */
+@supports not (color: oklch(0 0 0)) {
+  :root {
+    --sand: #f4efe3;
+    --sand-2: #ecebe6;
+    --ink: #2b3a33;
+    --ink-soft: #6b7770;
+    --ink-faint: #8a8a86;
+    --room-sage: #bfdbc9;
+    --room-sage-ink: #45564c;
+    --room-clay: #f3cbb1;
+    --room-clay-ink: #6b4a38;
+    --room-sky: #b9d6ea;
+    --room-sky-ink: #465f6e;
+    --accent: #d2734a;
+    --accent-ink: #fbf7f0;
+    --forest: #2f4a3f;
+    --forest-soft: #b7cec3;
+    --paper: #f8f6f0;
+    --rule: rgba(43, 58, 51, 0.15);
+    --rule-strong: rgba(43, 58, 51, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-micro: 1ms;
+    --dur-ui: 1ms;
+    --dur-reveal: 1ms;
+    --dur-overlay: 1ms;
+  }
+}

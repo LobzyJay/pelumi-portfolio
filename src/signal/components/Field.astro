@@ -1,0 +1,70 @@
+---
+// The contact card: a large rounded orange panel inset from the page, with
+// pill actions and the colophon line inside it — the page ends on the card,
+// as the reference draws it. On the homepage this replaces the site footer.
+import { site } from '../../data/site';
+
+const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
+---
+
+<section class="sg-field" id="contact">
+  <div class="sg-field__card sg-card sg-band--orange">
+    <p class="sg-mono sg-field__clock" data-dc-clock>Washington, D.C.</p>
+
+    <div class="sg-field__top">
+      <h2 class="sg-display sg-field__headline">Recommendation:<br />get in touch.</h2>
+      <div class="sg-field__actions">
+        <a href={mailHref} class="sg-pill sg-pill--lg sg-pill--ink">Email →</a>
+        <a href={site.contact.linkedin} rel="me" class="sg-pill sg-pill--lg sg-pill--bone">LinkedIn</a>
+        <a href="/signal/resume/" class="sg-pill sg-pill--lg sg-pill--bone">Résumé</a>
+      </div>
+    </div>
+
+    <div class="sg-field__foot">
+      <span class="sg-mono">{site.legalName}</span>
+      <span class="sg-mono">{site.colophon}</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sg-field { padding: 0 var(--gutter) var(--gutter); }
+  .sg-field__card { background: var(--sg-orange); color: var(--sg-bone); }
+
+  .sg-field__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+  .sg-field__headline { font-size: clamp(38px, 6vw, 86px); }
+  .sg-field__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* Plain digital readout, top right of the card. */
+  .sg-field__clock { text-align: right; opacity: 0.8; margin-bottom: 24px; }
+
+  .sg-field__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: clamp(40px, 6vw, 76px);
+    padding-top: 16px;
+    border-top: 1px solid color-mix(in srgb, var(--sg-bone) 45%, transparent);
+    opacity: 0.9;
+  }
+
+  @media (max-width: 640px) {
+    .sg-field__top { align-items: flex-start; }
+    .sg-field__actions { width: 100%; }
+    .sg-field__foot { justify-content: flex-start; row-gap: 4px; }
+    .sg-field__clock { text-align: left; }
+  }
+</style>
+
+<script>
+  import { initClock } from '../../scripts/clock';
+  initClock();
+</script>

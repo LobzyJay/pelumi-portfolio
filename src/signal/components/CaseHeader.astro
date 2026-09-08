@@ -1,0 +1,75 @@
+---
+// Blue case-study header: memo grid, honesty bar, then the question at
+// display scale. The question is the largest thing on the page — the same
+// hierarchy rule Atlas uses, stated in Signal's voice.
+import type { CollectionEntry } from 'astro:content';
+import { site } from '../../data/site';
+
+interface Props { doc: CollectionEntry<'work'> }
+const { doc } = Astro.props;
+const d = doc.data;
+
+const author = `Pelumi Igbalajobi${d.coauthors.length ? ` and ${d.coauthors.join(', ')}` : ''}`;
+const memo = [
+  { label: 'To', value: d.addressee },
+  { label: 'From', value: `${author} — ${d.authorRole}` },
+  { label: 'Subject', value: d.title },
+  { label: 'Date', value: d.dateLabel },
+];
+---
+
+<header class="sg-case-head sg-band--ink">
+  <div class="sg-case-head__memo grid-12">
+    {memo.map((m) => (
+      <div class="sg-case-head__cell col-span-3">
+        <span class="sg-mono sg-case-head__label">{m.label}</span>
+        <span class="sg-case-head__value">{m.value}</span>
+      </div>
+    ))}
+  </div>
+
+  {d.label === 'academic' && (
+    <p class="sg-case-head__honesty sg-mono">{site.honestyLabel}</p>
+  )}
+
+  <h1 class="sg-title sg-case-head__question">{d.question}</h1>
+</header>
+
+<style>
+  .sg-case-head {
+    padding: 28px var(--gutter) 0;
+    border-bottom: 8px solid var(--sg-orange);
+  }
+  .sg-case-head__memo { row-gap: 20px; padding-bottom: 24px; }
+  .sg-case-head__cell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px solid color-mix(in srgb, var(--sg-bone) 45%, transparent);
+  }
+  .sg-case-head__label { opacity: 0.7; }
+  .sg-case-head__value {
+    font-size: 14px;
+    font-weight: 500;
+    font-stretch: 100%;
+    line-height: 1.35;
+  }
+  .sg-case-head__honesty {
+    background: var(--sg-ink);
+    color: var(--sg-bone);
+    padding: 10px 14px;
+    max-width: 78ch;
+    text-transform: none;
+    letter-spacing: 0.04em;
+  }
+  .sg-case-head__question {
+    font-size: clamp(40px, 7vw, 96px);
+    margin: 36px 0;
+    max-width: 20ch;
+  }
+
+  @media (max-width: 640px) {
+    .sg-case-head__question { margin: 24px 0; }
+  }
+</style>

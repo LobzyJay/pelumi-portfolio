@@ -1,0 +1,47 @@
+---
+// Three facts, not vanity numbers (PRD §11.4 rejects impact stats on an
+// early-career site).
+//
+// These used to carry big 01/02/03 numerals with the label underneath — but
+// the facts aren't a sequence, so the numbers implied an order that doesn't
+// exist, and the label read after the thing it was labelling. Now each
+// column is a ruled entry: rule, then what kind of fact it is, then the
+// fact. Orange is on the label, where it does the pointing.
+import { site } from '../../data/site';
+
+const kinds = ['Degree', 'Fieldwork', 'Co-authorship'];
+// Widths track content length rather than dividing the grid into three equal
+// slabs — the facts are 4, 8 and 11 words, so equal columns left the first
+// stranded in white space and crushed the third.
+const spans = ['col-span-3', 'col-span-4', 'col-span-5'];
+const facts = site.proofStrip.map((fact, i) => ({ kind: kinds[i], fact, span: spans[i] }));
+---
+
+<section class="sg-proof sg-band sg-band--bone grid-12">
+  {facts.map(({ kind, fact, span }) => (
+    <div class="sg-proof__item" class:list={[span]}>
+      <span class="sg-mono sg-proof__kind">{kind}</span>
+      <p class="sg-title sg-proof__fact">{fact}</p>
+    </div>
+  ))}
+</section>
+
+<style>
+  /* No closing rule: each item already carries its own 2px top rule, so the
+     strip has structure without a line under it — and the focus band below
+     runs on the same ground, where that line only read as a seam. */
+  .sg-proof {
+    padding-block: clamp(28px, 3vw, 40px);
+    row-gap: 24px;
+  }
+  .sg-proof__item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 14px;
+    padding-right: var(--space-md);
+    border-top: 2px solid var(--sg-ink);
+  }
+  .sg-proof__kind { color: var(--sg-orange); }
+  .sg-proof__fact { font-size: clamp(16px, 1.35vw, 19px); max-width: 26ch; }
+</style>

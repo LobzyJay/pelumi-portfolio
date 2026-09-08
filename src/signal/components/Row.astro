@@ -1,0 +1,56 @@
+---
+// One work row, as the reference draws it: big numeral, title wrapping to
+// two or three lines, format and year right-aligned in mono. Carries the
+// filter data attributes src/scripts/filters.ts looks for, so the same
+// component serves the homepage wall and the filterable index.
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { doc: CollectionEntry<'work'> }
+const { doc } = Astro.props;
+const d = doc.data;
+const isReal = d.label === 'real';
+
+// The reference's right column is format, then a qualifier line: co-author
+// or organisation where there is one, else just the year.
+const qualifier = d.coauthors.length
+  ? `With ${d.coauthors.join(', ')} · ${d.date.getFullYear()}`
+  : isReal
+    ? `Shared Hope · ${d.date.getFullYear()}`
+    : String(d.date.getFullYear());
+---
+
+<a
+  href={`/signal/work/${doc.id}/`}
+  class="sg-row grid-12"
+  data-focus-areas={d.focusAreas.join('|')}
+  data-room={d.room}
+  data-format={d.format}
+  data-year={d.date.getFullYear()}
+>
+  <span class="sg-num sg-row__num col-span-2" class:list={{ 'sg-num--accent': isReal }}>
+    {String(d.order).padStart(2, '0')}
+  </span>
+  <span class="sg-title sg-row__title col-span-7">{d.title}</span>
+  <span class="sg-row__meta col-span-3 sg-mono">
+    <span>{d.format}</span>
+    <span>{qualifier}</span>
+  </span>
+</a>
+
+<style>
+  .sg-row {
+    align-items: center;
+    padding-block: 22px;
+    border-top: 1px solid var(--sg-ink);
+  }
+  .sg-row:hover { text-decoration: none; }
+  .sg-row:hover .sg-row__title { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 3px; }
+  .sg-row__num { font-size: clamp(44px, 4.6vw, 68px); }
+  .sg-row__title { font-size: clamp(18px, 1.7vw, 24px); max-width: 26ch; }
+  .sg-row__meta { display: flex; flex-direction: column; text-align: right; opacity: 0.75; }
+
+  @media (max-width: 640px) {
+    .sg-row { row-gap: 8px; padding-block: 18px; }
+    .sg-row__meta { text-align: left; }
+  }
+</style>

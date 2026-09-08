@@ -1,0 +1,19 @@
+---
+// PRD §6.4 — non-negotiable label on documents 01–05.
+import { site } from '../data/site';
+---
+
+<p class="honesty-label">{site.honestyLabel}</p>
+
+<style>
+  .honesty-label {
+    font-size: var(--size-small);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    font-style: italic;
+    max-width: 60ch;
+    padding-left: var(--space-sm);
+    border-left: 2px solid var(--rule-strong);
+    margin-top: var(--space-sm);
+  }
+</style>

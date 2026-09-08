@@ -1,0 +1,130 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import RouteTimeline from '../components/RouteTimeline.astro';
+import PhotoBento from '../components/PhotoBento.astro';
+import headshot from '../assets/photos/hero-portrait.jpg';
+import { site } from '../data/site';
+
+const educationExperience = [
+  {
+    dateLabel: site.degree.program,
+    title: site.degree.school,
+    body: 'Master of Global Policy Studies. (Degree title, concentration and graduation date to be confirmed.)',
+  },
+  {
+    dateLabel: 'Spring 2026',
+    title: `${site.experience.role}, ${site.experience.org}`,
+    body: site.experience.workstreams.map((w) => w.title).join(' · ') + ' — ' + site.experience.location,
+  },
+];
+---
+
+<Base title="About" description="Education, experience and the interests behind Pelumi Igbalajobi's work.">
+  <Nav />
+  <main id="main" class="wrap about">
+    <section class="about__hero grid-12">
+      <div class="about__portrait col-span-4" data-reveal data-reveal-group="about-hero" data-reveal-order="0">
+        <Image src={headshot} alt={site.name} width={480} height={600} />
+      </div>
+      <div class="about__intro col-span-8">
+        <h1 class="about__name" data-reveal data-reveal-group="about-hero" data-reveal-order="1">{site.name}</h1>
+        <p class="about__summary" data-reveal data-reveal-group="about-hero" data-reveal-order="2">{site.positioning}</p>
+      </div>
+    </section>
+
+    <section class="about__narrative" data-reveal data-reveal-group="about-narrative" data-reveal-order="0">
+      <p class="mono about__section-label">01 Background</p>
+      <p class="about__narrative-text">
+        <!-- PENDING: ~300-word first-person narrative, to be drafted with Pelumi (PRD §5.2, §6.5). -->
+        Pelumi Igbalajobi is a global-policy analyst working at the intersection of emerging technology,
+        human security and governance. Across her academic and field work, the same question keeps
+        showing up: who is protected, who is accountable, and what institution has to change when a new
+        technology or shock arrives. This paragraph is a placeholder for the narrative she'll write in
+        her own voice — see the open questions in the project brief.
+      </p>
+    </section>
+
+    <section class="about__section">
+      <p class="mono about__section-label">02 Education &amp; experience</p>
+      <RouteTimeline entries={educationExperience} />
+    </section>
+
+    <section class="about__section about__lists grid-12">
+      <div class="col-span-4">
+        <p class="mono about__section-label">03 Interests</p>
+        <ul class="about__list">{site.interests.map((i) => <li>{i}</li>)}</ul>
+      </div>
+      <div class="col-span-4">
+        <p class="mono about__section-label">Hobbies</p>
+        <ul class="about__list">{site.hobbies.map((h) => <li>{h}</li>)}</ul>
+      </div>
+      <div class="col-span-4">
+        <p class="mono about__section-label">Places</p>
+        <ul class="about__list about__list--places">{site.places.map((p) => <li>{p}</li>)}</ul>
+      </div>
+    </section>
+
+    <p class="about__shy-line" data-reveal data-reveal-group="about-shy" data-reveal-order="0">
+      {site.shyLine}
+    </p>
+
+    <section class="about__section">
+      <p class="mono about__section-label">04 In frame</p>
+      <PhotoBento />
+    </section>
+
+    <section class="about__resume">
+      <p class="mono">Full legal name: {site.legalName}</p>
+      <a href={site.contact.resumeHref} class="pill pill--ink">Résumé ↓</a>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .about { padding-block: var(--space-xl) var(--space-3xl); }
+  .about__hero {
+    gap: var(--space-lg);
+    align-items: end;
+    margin-bottom: var(--space-2xl);
+  }
+  .about__portrait :global(img) {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+  .about__name { font-size: var(--size-h1); letter-spacing: -0.025em; }
+  .about__summary { font-size: var(--size-h3); color: var(--ink-soft); margin-top: var(--space-sm); max-width: 40ch; }
+
+  .about__section { margin-top: var(--space-2xl); }
+  .about__section-label { color: var(--ink-soft); margin-bottom: var(--space-md); }
+  .about__narrative-text { font-size: var(--size-body); line-height: 1.6; max-width: 62ch; }
+
+  .about__lists { row-gap: var(--space-lg); }
+  .about__list { display: flex; flex-direction: column; gap: 10px; font-size: var(--size-small); }
+  .about__list--places { font-size: var(--size-h3); font-weight: 500; letter-spacing: -0.01em; }
+
+  .about__shy-line {
+    margin-top: var(--space-2xl);
+    font-size: var(--size-h2);
+    letter-spacing: -0.02em;
+    max-width: 20ch;
+  }
+
+  .about__resume {
+    margin-top: var(--space-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    border-top: 1px solid var(--rule);
+    padding-top: var(--space-lg);
+  }
+  .about__resume .mono { color: var(--ink-soft); }
+
+</style>

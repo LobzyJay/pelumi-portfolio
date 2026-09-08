@@ -1,0 +1,53 @@
+---
+// Vertical timeline for education/experience on /about. Adapted from the
+// Atlas 02 "Route" pattern (a horizontal map) into a vertical list, which
+// holds up far better at the About page's narrower measure and on mobile.
+interface Entry { dateLabel: string; title: string; body?: string }
+interface Props { entries: Entry[] }
+const { entries } = Astro.props;
+---
+
+<ol class="route">
+  {entries.map((e, i) => (
+    <li data-reveal data-reveal-group="route" data-reveal-order={i}>
+      <span class="route__dot" aria-hidden="true"></span>
+      <div class="route__content">
+        <p class="mono route__date">{e.dateLabel}</p>
+        <p class="route__title">{e.title}</p>
+        {e.body && <p class="route__body">{e.body}</p>}
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .route {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding-left: var(--space-md);
+  }
+  .route::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--rule-strong);
+  }
+  .route li { position: relative; padding-left: var(--space-md); }
+  .route__dot {
+    position: absolute;
+    left: calc(-1 * var(--space-md) + 0px);
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .route__date { color: var(--ink-soft); margin-bottom: 6px; }
+  .route__title { font-size: var(--size-h3); font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+  .route__body { font-size: var(--size-small); line-height: 1.5; color: var(--ink-soft); margin-top: 6px; max-width: 60ch; }
+</style>

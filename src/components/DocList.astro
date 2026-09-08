@@ -1,0 +1,100 @@
+---
+// Vertical-line document list — shared by Rooms.astro (static) and the
+// enhanced Stage. Source: Atlas 04 - The Stage.dc.html DocList markup.
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  docs: CollectionEntry<'work'>[];
+  /** slug of the entry to render with the accent dot (the room's featured doc) */
+  highlight?: string;
+  revealGroup?: string;
+}
+
+const { docs, highlight, revealGroup = 'doclist' } = Astro.props;
+---
+
+<div class="doclist" style={`--rows: ${docs.length}`}>
+  <div class="doclist__spine" aria-hidden="true"></div>
+  <ul>
+    {docs.map((doc, i) => (
+      <li data-reveal data-reveal-group={revealGroup} data-reveal-order={i}>
+        <span class="doclist__dot" class:list={{ 'doclist__dot--accent': doc.id === highlight }} aria-hidden="true"></span>
+        <a href={`/work/${doc.id}/`} class="doclist__entry">
+          <p class="mono doclist__meta">{doc.data.dateLabel} · {String(doc.data.order).padStart(2, '0')} · {doc.data.format}</p>
+          <p class="doclist__title">{doc.data.title}</p>
+          <p class="doclist__body">{doc.data.excerpt}</p>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style is:global>
+  /* Global (not scoped): src/scripts/stage.ts re-renders this exact markup
+     via innerHTML for the enhanced Stage, where Astro's scoped-CSS hash
+     would not apply. */
+  .doclist {
+    position: relative;
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    column-gap: var(--space-md);
+    min-width: 0;
+  }
+  .doclist__spine {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    width: 1px;
+    background: currentColor;
+    opacity: 0.4;
+    justify-self: center;
+    margin-block: 14px;
+  }
+  .doclist ul {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+  }
+  .doclist li {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    padding-bottom: var(--space-lg);
+  }
+  .doclist li:last-child { padding-bottom: 0; }
+  .doclist__dot {
+    grid-column: 1;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: currentColor;
+    justify-self: center;
+    margin-top: 8px;
+  }
+  .doclist__dot--accent { background: var(--accent); }
+  .doclist__entry { grid-column: 2; display: block; }
+  .doclist__meta { color: currentColor; opacity: 0.75; }
+  .doclist__title {
+    font-size: var(--size-doc-title);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-top: 8px;
+    transition: color var(--dur-ui) var(--ease-reveal);
+  }
+  .doclist__entry:hover .doclist__title,
+  .doclist__entry:focus-visible .doclist__title { color: var(--accent); }
+  .doclist__body {
+    font-size: var(--size-small);
+    line-height: 1.5;
+    opacity: 0.85;
+    margin-top: 8px;
+    max-width: 52ch;
+  }
+
+  @supports (grid-template-columns: subgrid) {
+    .doclist ul, .doclist li { grid-template-columns: subgrid; }
+  }
+  @supports not (grid-template-columns: subgrid) {
+    .doclist ul, .doclist li { grid-template-columns: 24px 1fr; }
+  }
+</style>

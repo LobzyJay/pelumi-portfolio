@@ -1,0 +1,72 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { doc: CollectionEntry<'work'> }
+const { doc } = Astro.props;
+const d = doc.data;
+
+const images = import.meta.glob<{ default: ImageMetadata }>('../assets/documents/*.png', { eager: true });
+const previewSrc = d.previewImage
+  ? images[`../assets/documents/${d.previewImage}.png`]?.default
+  : undefined;
+---
+
+<div class="doc-preview">
+  <p class="mono doc-preview__label">Document</p>
+  <div class="doc-preview__body">
+    {previewSrc ? (
+      <Image src={previewSrc} alt={`First page of ${d.title}`} width={480} height={620} class="doc-preview__image" />
+    ) : (
+      <div class="doc-preview__pending">
+        <p class="mono">PDF pending</p>
+      </div>
+    )}
+    <div class="doc-preview__meta">
+      {d.pdf ? (
+        <a href={d.pdf} class="pill pill--ink" download>Read the full PDF ↓</a>
+      ) : (
+        <p class="doc-preview__note">Not yet published — see the note above.</p>
+      )}
+      {d.pages && d.words && (
+        <p class="mono doc-preview__stats">{d.pages} pages · {d.words.toLocaleString()} words</p>
+      )}
+    </div>
+  </div>
+</div>
+
+<style>
+  .doc-preview { margin-top: var(--space-xl); }
+  .doc-preview__label { color: var(--ink-soft); margin-bottom: var(--space-sm); }
+  .doc-preview__body {
+    display: flex;
+    gap: var(--space-lg);
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .doc-preview__image {
+    width: 240px;
+    height: auto;
+    border: 1px solid var(--rule-strong);
+  }
+  .doc-preview__pending {
+    width: 240px;
+    aspect-ratio: 4/5.18;
+    border: 1px dashed var(--rule-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-soft);
+    text-align: center;
+    padding: var(--space-sm);
+  }
+  .doc-preview__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: flex-start;
+    padding-top: var(--space-sm);
+  }
+  .doc-preview__stats { color: var(--ink-soft); }
+  .doc-preview__note { font-size: var(--size-small); color: var(--ink-soft); max-width: 40ch; }
+</style>

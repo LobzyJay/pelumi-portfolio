@@ -1,0 +1,100 @@
+---
+// The footer, as its own squircle card — separate from the page grid, with
+// one small interactive/"alive" touch: the current time in Washington, D.C.
+// Shared by Footer.astro (light pages) and ContactRoom.astro (dark room),
+// so the styling only has to be right in one place.
+import { site } from '../data/site';
+
+interface Props { dark?: boolean }
+const { dark = false } = Astro.props;
+
+const navLinks = [
+  { href: '/work', label: 'Work' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<div class="footer-card" class:list={{ 'footer-card--dark': dark }}>
+  <div class="footer-card__row">
+    <span class="footer-card__mark" aria-hidden="true"></span>
+    <span class="mono">{site.legalName}</span>
+    <nav class="footer-card__nav mono">
+      {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <span class="mono">{site.colophon}</span>
+  </div>
+  <div class="footer-card__row footer-card__row--sub">
+    <p class="mono footer-card__colophon">
+      Set in Familjen Grotesk and Geist Mono · drawn in isometric ink · built with Astro.
+    </p>
+    <p class="mono footer-card__clock" data-dc-clock>Washington, D.C.</p>
+  </div>
+</div>
+
+<style>
+  .footer-card {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: var(--space-lg);
+    transition: border-color var(--dur-ui) var(--ease-reveal);
+  }
+  .footer-card:hover, .footer-card:focus-within { border-color: var(--rule-strong); }
+
+  .footer-card--dark {
+    background: color-mix(in oklch, var(--forest), black 15%);
+    border-color: oklch(0.955 0.02 85 / 0.15);
+  }
+  .footer-card--dark:hover { border-color: oklch(0.955 0.02 85 / 0.3); }
+
+  .footer-card__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .footer-card--dark .footer-card__row { color: var(--forest-soft); }
+
+  .footer-card__mark {
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    flex: none;
+    border-radius: 3px;
+    transition: transform var(--dur-ui) var(--ease-reveal);
+  }
+  .footer-card:hover .footer-card__mark { transform: rotate(12deg) scale(1.15); }
+
+  .footer-card__nav { display: flex; gap: var(--space-md); margin-left: auto; }
+  .footer-card__nav a:hover { color: var(--ink); }
+  .footer-card--dark .footer-card__nav a:hover { color: var(--sand); }
+
+  .footer-card__row--sub {
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--rule);
+    justify-content: space-between;
+    font-size: 10px;
+    opacity: 0.85;
+  }
+  .footer-card--dark .footer-card__row--sub { border-top-color: oklch(0.955 0.02 85 / 0.15); }
+  .footer-card__colophon { opacity: 0.8; }
+  .footer-card__clock { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .footer-card__nav { margin-left: 0; width: 100%; gap: var(--space-sm); }
+    .footer-card__row--sub { flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
+</style>
+
+<script>
+  import { initClock } from '../scripts/clock';
+  initClock();
+  document.addEventListener('astro:page-load', initClock);
+</script>

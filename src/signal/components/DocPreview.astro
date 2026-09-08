@@ -1,0 +1,59 @@
+---
+// First-page render + download, or the honest "pending" state for the one
+// document whose source file is withheld (doc 06 — see its MDX frontmatter).
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { doc: CollectionEntry<'work'> }
+const { doc } = Astro.props;
+const d = doc.data;
+
+const images = import.meta.glob<{ default: ImageMetadata }>('../../assets/documents/*.png', { eager: true });
+const preview = d.previewImage ? images[`../../assets/documents/${d.previewImage}.png`]?.default : undefined;
+---
+
+<section class="sg-doc grid-12">
+  <div class="sg-doc__figure col-span-4">
+    {preview ? (
+      <Image src={preview} alt={`First page of ${d.title}`} width={520} height={673} />
+    ) : (
+      <div class="sg-doc__pending"><span class="sg-mono">PDF pending</span></div>
+    )}
+  </div>
+
+  <div class="sg-doc__meta col-span-8">
+    <span class="sg-mono--12 sg-mono">Document</span>
+    {d.pdf ? (
+      <a href={d.pdf} download class="sg-pill sg-pill--ink sg-doc__cta">Read the full PDF ↓</a>
+    ) : (
+      <p class="sg-body sg-doc__note">
+        Not yet published — the source presentation and permission to publish it are still outstanding.
+        See the note in the context above.
+      </p>
+    )}
+    {d.pages && d.words && (
+      <p class="sg-mono sg-doc__stats">{d.pages} pages · {d.words.toLocaleString()} words</p>
+    )}
+  </div>
+</section>
+
+<style>
+  .sg-doc { align-items: start; margin-top: var(--sg-band); }
+  .sg-doc__figure :global(img) {
+    width: 100%;
+    border: 1px solid var(--sg-ink);
+  }
+  .sg-doc__pending {
+    width: 100%;
+    aspect-ratio: 4 / 5.18;
+    border: 1px dashed var(--sg-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+  }
+  .sg-doc__meta { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+  .sg-doc__cta { align-self: flex-start; }
+  .sg-doc__note { font-size: 17px; max-width: 46ch; }
+  .sg-doc__stats { opacity: 0.7; }
+</style>

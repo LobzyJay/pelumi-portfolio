@@ -1,0 +1,88 @@
+---
+// Typeface gate (plan Phase 0). Not linked from nav, excluded from the
+// sitemap. Three candidates rendered identically: the hero name/positioning
+// at scale, and one document row, so the difference is easy to judge.
+import { Image } from 'astro:assets';
+import headshot from '../assets/photos/headshot.jpg';
+import '../styles/global.css';
+
+const candidates = [
+  { key: 'familjen', label: 'Familjen Grotesk', note: 'The README’s baseline pick — a true light/bold neo-grotesque.', fontFamily: "'Familjen Grotesk', system-ui, sans-serif" },
+  { key: 'schibsted', label: 'Schibsted Grotesk', note: 'Slightly warmer, rounder terminals; a touch more editorial.', fontFamily: "'Schibsted Grotesk', system-ui, sans-serif" },
+  { key: 'intertight', label: 'Inter Tight', note: 'Tighter tracking by default, very neutral — the safest, least distinctive option.', fontFamily: "'Inter Tight', system-ui, sans-serif" },
+];
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Specimen — type comparison</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    @font-face {
+      font-family: 'Schibsted Grotesk';
+      src: url('../assets/fonts/schibsted-grotesk-variable.woff2') format('woff2-variations');
+      font-weight: 400 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter Tight';
+      src: url('../assets/fonts/inter-tight-variable.woff2') format('woff2-variations');
+      font-weight: 400 700;
+      font-display: swap;
+    }
+    body { background: var(--sand); }
+    .page {
+      max-width: 1200px;
+      margin-inline: auto;
+      padding: var(--space-xl) var(--gutter) var(--space-3xl);
+    }
+    .page > .mono { color: var(--ink-soft); margin-bottom: var(--space-sm); }
+    .page h1 { font-size: 32px; letter-spacing: -0.02em; margin-bottom: var(--space-2xl); }
+    .candidate + .candidate { margin-top: var(--space-3xl); border-top: 1px solid var(--rule); padding-top: var(--space-xl); }
+    .candidate__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-lg); flex-wrap: wrap; gap: 8px; }
+    .candidate__head h2 { font-family: system-ui, sans-serif; font-size: 20px; font-weight: 600; }
+    .candidate__head p { font-family: system-ui, sans-serif; font-size: 14px; color: var(--ink-soft); max-width: 50ch; }
+    .demo { font-variant-numeric: lining-nums; }
+    .demo .kicker { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+    .demo .name { font-size: clamp(48px, 6vw, 96px); line-height: 0.92; font-weight: 600; letter-spacing: -0.035em; margin-top: 12px; }
+    .demo .positioning { font-size: clamp(20px, 2vw, 28px); line-height: 1.15; letter-spacing: -0.015em; margin-top: 20px; color: oklch(0.35 0.02 160); max-width: 26ch; }
+    .demo .row { display: grid; grid-template-columns: 60px 1fr auto; column-gap: 20px; align-items: baseline; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--rule); }
+    .demo .row .num { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; }
+    .demo .row .title { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+    .demo .row .meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+    .demo-grid { display: grid; grid-template-columns: 1fr 200px; gap: 40px; align-items: end; }
+    .demo-grid img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 4px; }
+    @media (max-width: 800px) { .demo-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <p class="mono">Internal · not linked from nav</p>
+    <h1>Type specimen — pick a candidate before Phase 3</h1>
+
+    {candidates.map((c) => (
+      <div class="candidate">
+        <div class="candidate__head">
+          <h2>{c.label}</h2>
+          <p>{c.note}</p>
+        </div>
+        <div class="demo-grid">
+          <div class="demo" style={`font-family:${c.fontFamily}`}>
+            <p class="kicker">Global policy analyst · Washington, D.C.</p>
+            <p class="name">Pelumi<br />Igbalajobi</p>
+            <p class="positioning">Technology, human security, and the institutions that govern both.</p>
+            <div class="row">
+              <span class="num">01</span>
+              <span class="title">Establishing U.S. policy on AI in autonomous military targeting systems</span>
+              <span class="meta">Decision memo · 2026</span>
+            </div>
+          </div>
+          <Image src={headshot} alt="" width={400} height={500} />
+        </div>
+      </div>
+    ))}
+  </div>
+</body>
+</html>

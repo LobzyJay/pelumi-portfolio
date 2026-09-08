@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+// Inlined as raw markup, not <img src="data:...">: SVG data-URIs failed to
+// decode (naturalWidth 0) across every browser tested during QA.
+import platform from '../assets/iso/layer-platform.svg?raw';
+---
+
+<Base title="Not found" description="This memo could not be located.">
+  <Nav />
+  <main id="main" class="wrap not-found">
+    <p class="mono">404</p>
+    <h1>{site.notFoundLine}</h1>
+    <div class="not-found__art" set:html={platform} />
+    <a href="/" class="pill pill--accent">Back to the brief</a>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .not-found {
+    min-height: 60svh;
+    padding-block: var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .not-found .mono { color: var(--ink-soft); }
+  .not-found h1 { font-size: var(--size-h1); letter-spacing: -0.025em; max-width: 16ch; }
+  .not-found__art { width: min(360px, 70%); opacity: 0.8; margin-block: var(--space-md); }
+  .not-found__art :global(svg) { width: 100%; display: block; }
+</style>

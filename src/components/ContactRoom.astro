@@ -1,0 +1,129 @@
+---
+// The last room — "Recommendation: get in touch." Source: Atlas 04's contact
+// band, extended with the platform scene (dark colourway) as a closing
+// illustration — the same drawing that ran the interactive Stage, now at
+// rest — plus a personal pull-quote and a real colophon, so the last thing
+// a visitor sees still sounds like Pelumi and not a template.
+import { site } from '../data/site';
+import FooterCard from './FooterCard.astro';
+
+interface Props {
+  fullPage?: boolean;
+}
+const { fullPage = false } = Astro.props;
+
+// Inlined as raw markup, not <img src="data:...">: SVG data-URIs failed to
+// decode (naturalWidth 0) across every browser tested during QA.
+const isoModules = import.meta.glob('../assets/iso/*-dark.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
+const scene = Object.entries(isoModules).find(([p]) => p.endsWith('iso-scene-dark.svg'))?.[1] ?? '';
+
+const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
+---
+
+<section class="contact-room room-forest" class:list={{ 'contact-room--full': fullPage }}>
+  <div class="contact-room__scene" aria-hidden="true" data-reveal data-reveal-group="contact" data-reveal-order="5" set:html={scene}></div>
+
+  <div class="contact-room__inner grid-12">
+    <div class="contact-room__text col-span-7">
+      <p class="mono" data-reveal data-reveal-group="contact" data-reveal-order="0">Last room</p>
+
+      <blockquote class="contact-room__quote" data-reveal data-reveal-group="contact" data-reveal-order="1">
+        “{site.quote}”
+      </blockquote>
+
+      <h2 class="contact-room__headline" data-reveal data-reveal-group="contact" data-reveal-order="2">
+        Recommendation: get in touch.
+      </h2>
+
+      <p class="mono contact-room__availability" data-reveal data-reveal-group="contact" data-reveal-order="3">
+        {site.contact.availability}
+      </p>
+
+      <div class="contact-room__actions" data-reveal data-reveal-group="contact" data-reveal-order="4">
+        <a href={mailHref} class="pill pill--accent">Email Pelumi →</a>
+        <a href={site.contact.linkedin} class="pill pill--on-dark" rel="me">LinkedIn</a>
+        <a href={site.contact.resumeHref} class="pill pill--on-dark">Résumé (PDF)</a>
+      </div>
+      <p class="mono contact-room__email-line">{site.contact.email}</p>
+    </div>
+  </div>
+
+  <div class="contact-room__footer-wrap">
+    <FooterCard dark />
+  </div>
+</section>
+
+<style>
+  .contact-room {
+    position: relative;
+    padding: var(--space-xl) var(--gutter) var(--space-lg);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .contact-room--full { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+
+  .contact-room__scene {
+    position: absolute;
+    right: -4%;
+    bottom: -6%;
+    width: min(46%, 620px);
+    pointer-events: none;
+    opacity: 0.85;
+  }
+  .contact-room__scene :global(svg) { width: 100%; display: block; }
+
+  .contact-room__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1440px;
+    margin-inline: auto;
+    width: 100%;
+    min-height: 55vh;
+    align-items: flex-end;
+  }
+  .contact-room__text { max-width: 44ch; }
+
+  .contact-room__quote {
+    margin: var(--space-md) 0 0;
+    font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--forest-soft);
+    max-width: 32ch;
+    border-left: 2px solid var(--accent);
+    padding-left: var(--space-sm);
+  }
+
+  .contact-room__headline {
+    font-size: clamp(2.75rem, 5vw, 4.5rem);
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+    margin-top: var(--space-lg);
+  }
+  .contact-room__availability {
+    color: var(--forest-soft);
+    margin-top: var(--space-sm);
+  }
+  .contact-room__actions {
+    display: flex;
+    gap: 12px;
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .contact-room__email-line {
+    margin-top: var(--space-sm);
+    color: var(--forest-soft);
+  }
+
+  .contact-room__footer-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1440px;
+    margin: var(--space-xl) auto 0;
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .contact-room__scene { display: none; }
+  }
+</style>

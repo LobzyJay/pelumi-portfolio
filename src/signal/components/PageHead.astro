@@ -1,0 +1,47 @@
+---
+// Blue header band for inner pages. One fitted display word (WORK, ABOUT)
+// filling the full column, with a mono meta line above it.
+interface Props {
+  word: string;
+  metaLeft: string;
+  metaRight?: string;
+}
+const { word, metaLeft, metaRight } = Astro.props;
+---
+
+<header class="sg-pagehead sg-band--ink">
+  <div class="sg-pagehead__meta">
+    <span class="sg-mono--12 sg-mono">{metaLeft}</span>
+    {metaRight && <span class="sg-mono--12 sg-mono">{metaRight}</span>}
+  </div>
+  <div class="sg-pagehead__word sg-display" data-fit-container>
+    <h1 data-fit-line data-fit-ref="200">{word}</h1>
+  </div>
+</header>
+
+<style>
+  .sg-pagehead {
+    padding: 28px var(--gutter) 36px;
+  }
+  .sg-pagehead__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 16px;
+  }
+  .sg-pagehead__word { container-type: inline-size; }
+  .sg-pagehead__word [data-fit-line] {
+    white-space: nowrap;
+    width: max-content;
+    font-size: 200px;
+  }
+  @media (max-width: 640px) {
+    .sg-pagehead__word [data-fit-line] { font-size: 90px; }
+  }
+</style>
+
+<script>
+  import { initSignalFit } from '../fit';
+  initSignalFit();
+</script>

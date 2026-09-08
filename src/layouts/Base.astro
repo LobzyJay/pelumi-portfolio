@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** page-specific JSON-LD, stringified, injected alongside the site-wide Person graph */
+  jsonLd?: Record<string, unknown>;
+  bodyClass?: string;
+}
+
+const { title, description, jsonLd, bodyClass } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  alternateName: site.legalName,
+  jobTitle: 'Global policy analyst',
+  url: Astro.site?.toString(),
+  sameAs: [site.contact.linkedin],
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: site.degree.school,
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — Pelumi Igbalajobi</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#f4efe3" />
+
+    <meta property="og:title" content={`${title} — Pelumi Igbalajobi`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    <ClientRouter />
+  </head>
+  <body class={bodyClass}>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <slot />
+    <script>
+      import '../scripts/reveal';
+    </script>
+  </body>
+</html>

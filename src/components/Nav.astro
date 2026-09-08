@@ -1,0 +1,69 @@
+---
+import { site } from '../data/site';
+
+const { pathname } = Astro.url;
+const links = [
+  { href: '/work', label: 'Work' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<nav class="nav">
+  <a href="/" class="nav__brand">
+    <span class="nav__mark" aria-hidden="true"></span>
+    {site.name}
+  </a>
+  <div class="nav__links">
+    {links.map((l) => (
+      <a
+        href={l.href}
+        class="pill pill--small"
+        aria-current={pathname.startsWith(l.href) ? 'page' : undefined}
+      >
+        {l.label}
+      </a>
+    ))}
+    <a href={site.contact.resumeHref} class="pill pill--ink pill--small">{site.ctaResume} ↓</a>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 84px;
+    padding-inline: var(--gutter);
+  }
+  .nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .nav__mark {
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    display: inline-block;
+    border-radius: 4px;
+  }
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav__links a[aria-current='page'] {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  @media (max-width: 640px) {
+    .nav { height: 64px; }
+    .nav__links :is(a)[href='/work'],
+    .nav__links :is(a)[href='/about'] {
+      display: none;
+    }
+  }
+</style>

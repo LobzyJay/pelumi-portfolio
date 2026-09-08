@@ -1,0 +1,167 @@
+---
+// Homepage highlights. The full six live on /signal/work — repeating them
+// here made the homepage a duplicate index, so this shows three as cards
+// built around each document's framing question (the most quotable thing in
+// the material, and already written as one sentence), then hands off to the
+// index.
+//
+// Cards are rounded; the ruled rows on /signal/work are not. That's the
+// rule: lists are ruled, highlights are carded.
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  docs: CollectionEntry<'work'>[];
+  id?: string;
+}
+const { docs, id } = Astro.props;
+
+// Featured order from content-model.md: 01 · 02 · 06 — the sharpest memo,
+// the signature theme, and the one real-world deliverable.
+//
+// One row of three identical cards: equal spans, equal height. The three
+// documents are peers, so the grid says so.
+const FEATURED = ['autonomous-targeting', 'cyber-enabled-trafficking', 'shared-hope-field-report'];
+const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug))
+  .filter((doc): doc is CollectionEntry<'work'> => Boolean(doc));
+const total = docs.length;
+---
+
+<section class="sg-hl sg-band sg-band--bone" id={id}>
+  <div class="sg-hl__head">
+    <h2 class="sg-hl__heading">Selected work</h2>
+    <span class="sg-mono--12 sg-mono">Three of {total} · 2025–2026</span>
+  </div>
+
+  <div class="sg-hl__cards grid-12">
+    {picked.map((doc) => {
+      const d = doc.data;
+      const isReal = d.label === 'real';
+      return (
+        <a
+          href={`/signal/work/${doc.id}/`}
+          class="sg-hl__card col-span-4"
+          class:list={[{ 'sg-hl__card--accent': isReal }]}
+        >
+          <span class="sg-mono sg-hl__meta">
+            {String(d.order).padStart(2, '0')} · {d.format} · {d.dateLabel}
+          </span>
+          <p class="sg-title sg-hl__question">{d.question}</p>
+          <span class="sg-hl__foot">
+            <span class="sg-hl__title">{d.title}</span>
+            <span class="sg-hl__arrow" aria-hidden="true">→</span>
+          </span>
+        </a>
+      );
+    })}
+  </div>
+
+  <div class="sg-hl__cta">
+    <a href="/signal/work/" class="sg-pill sg-pill--ink sg-pill--lg">See all work →</a>
+    <span class="sg-mono sg-hl__cta-note">Filterable by focus area, format and year</span>
+  </div>
+</section>
+
+<style>
+  .sg-hl__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+    border-bottom: 4px solid var(--sg-ink);
+  }
+  .sg-hl__heading {
+    font-size: 24px;
+    font-weight: 800;
+    font-stretch: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .sg-hl__cards { row-gap: var(--space-md); margin-top: var(--space-lg); }
+
+  .sg-hl__card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    border: 1px solid var(--sg-ink);
+    border-radius: 20px;
+    padding: 28px;
+    min-height: 340px;
+  }
+  .sg-hl__card:hover { text-decoration: none; }
+  .sg-hl__card:hover .sg-hl__title { text-decoration: underline; text-underline-offset: 4px; }
+
+  :global(.signal) .sg-hl__card--accent {
+    background: var(--sg-orange);
+    border-color: var(--sg-orange);
+    color: var(--sg-bone);
+  }
+
+  /* Hover fills the card. The inner hairline uses currentColor, so it turns
+     with everything else. Colour only — nothing moves. */
+  .sg-hl__card {
+    transition: background-color 160ms linear, border-color 160ms linear, color 160ms linear;
+  }
+  :global(.signal) .sg-hl__card:hover,
+  :global(.signal) .sg-hl__card:focus-visible {
+    background: var(--sg-orange);
+    border-color: var(--sg-orange);
+    color: var(--sg-bone);
+  }
+  /* The accent card is already orange, so it inverts to ink instead. */
+  :global(.signal) .sg-hl__card--accent:hover,
+  :global(.signal) .sg-hl__card--accent:focus-visible {
+    background: var(--sg-ink);
+    border-color: var(--sg-ink);
+    color: var(--sg-bone);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sg-hl__card { transition: none; }
+  }
+
+  .sg-hl__meta { opacity: 0.65; }
+  .sg-hl__question {
+    font-size: clamp(20px, 1.9vw, 27px);
+    text-wrap: pretty;
+  }
+  .sg-hl__foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid currentColor;
+  }
+  .sg-hl__title {
+    font-size: 13px;
+    font-weight: 600;
+    font-stretch: 100%;
+    line-height: 1.3;
+    opacity: 0.8;
+  }
+  .sg-hl__arrow { font-size: 18px; flex: none; }
+
+  .sg-hl__cta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: var(--space-lg);
+  }
+  .sg-hl__cta-note { opacity: 0.6; }
+
+  /* Tablet keeps the single row, but 3/5/4 would put the narrow card at
+     ~170px — too tight for a question. Even spans hold the row together
+     until the grid stacks at 640. */
+  @media (max-width: 1024px) {
+    .sg-hl__card { padding: 22px; }
+  }
+
+  @media (max-width: 640px) {
+    .sg-hl__card { min-height: 0; }
+  }
+</style>

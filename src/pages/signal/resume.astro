@@ -1,0 +1,204 @@
+---
+// Résumé. Every "Résumé" link previously pointed at
+// /documents/resume-pending.pdf, which does not exist — so they all 404'd.
+// This is a real page built only from data already confirmed in
+// src/data/site.ts, src/data/rooms.ts and the work collection. Nothing here
+// is invented: anything unconfirmed is labelled as pending rather than
+// filled in. It prints cleanly, so it doubles as the PDF until Pelumi
+// supplies her own.
+import { getCollection } from 'astro:content';
+import Layout from '../../signal/Layout.astro';
+import PageHead from '../../signal/components/PageHead.astro';
+import Field from '../../signal/components/Field.astro';
+import { rooms } from '../../data/rooms';
+import { site } from '../../data/site';
+
+const docs = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
+---
+
+<Layout
+  title="Résumé"
+  description="Résumé — Pelumi Igbalajobi, global policy analyst, Washington, D.C."
+>
+  <PageHead word="Résumé" metaLeft={site.kicker} metaRight={site.degree.program} />
+
+  <section class="sg-cv sg-band sg-band--bone">
+    <div class="sg-cv__intro grid-12">
+      <p class="sg-cv__lede sg-title col-span-8">{site.positioning}</p>
+      <ul class="sg-cv__contact col-span-4 sg-mono">
+        <li><a href={mailHref}>{site.contact.email}</a></li>
+        <li><a href={site.contact.linkedin} rel="me">linkedin.com/in/oluwapelumiigbalajobi</a></li>
+        <li>Washington, D.C.</li>
+      </ul>
+    </div>
+
+    <section class="sg-cv__block">
+      <h2 class="sg-mono sg-cv__label">01 Education</h2>
+      <div class="sg-cv__entry grid-12">
+        <span class="sg-mono col-span-3">Pending dates</span>
+        <div class="col-span-9">
+          <h3 class="sg-title sg-cv__entry-title">{site.degree.school}</h3>
+          <p class="sg-body sg-cv__entry-body">{site.degree.program}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-cv__block">
+      <h2 class="sg-mono sg-cv__label">02 Experience</h2>
+      <div class="sg-cv__entry grid-12">
+        <span class="sg-mono col-span-3">Spring 2026</span>
+        <div class="col-span-9">
+          <h3 class="sg-title sg-cv__entry-title">{site.experience.role}, {site.experience.org}</h3>
+          <p class="sg-mono sg-cv__entry-meta">{site.experience.location}</p>
+          <ul class="sg-cv__stream">
+            {site.experience.workstreams.map((w) => (
+              <li>
+                <span class="sg-cv__stream-title">{w.title}</span>
+                <span class="sg-body sg-cv__stream-body">{w.body}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-cv__block">
+      <h2 class="sg-mono sg-cv__label">03 Selected work</h2>
+      <ul class="sg-cv__work">
+        {docs.map((doc) => (
+          <li class="sg-cv__work-row grid-12">
+            <span class="sg-num sg-cv__work-num col-span-1" class:list={{ 'sg-num--accent': doc.data.label === 'real' }}>
+              {String(doc.data.order).padStart(2, '0')}
+            </span>
+            <div class="col-span-8">
+              <a href={`/signal/work/${doc.id}/`} class="sg-cv__work-title sg-title">{doc.data.title}</a>
+              <p class="sg-body sg-cv__work-q">{doc.data.question}</p>
+            </div>
+            <span class="sg-mono sg-cv__work-meta col-span-3">
+              {doc.data.format}<br />{doc.data.dateLabel}
+              {doc.data.coauthors.length > 0 && <><br />With {doc.data.coauthors.join(', ')}</>}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p class="sg-mono sg-cv__note">
+        01–05 are academic policy exercises written at the LBJ School; addressee and author role are part of the
+        assignment. 06 is a real deliverable.
+      </p>
+    </section>
+
+    <section class="sg-cv__block">
+      <h2 class="sg-mono sg-cv__label">04 Focus areas</h2>
+      <div class="sg-cv__focus grid-12">
+        {rooms.map((r) => (
+          <div class="col-span-4">
+            <h3 class="sg-cv__focus-title sg-title">{r.title}</h3>
+            <ul class="sg-cv__focus-list">
+              {r.focusAreas.map((a) => <li class="sg-body">{a}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="sg-cv__block">
+      <h2 class="sg-mono sg-cv__label">05 Also</h2>
+      <div class="sg-cv__also grid-12">
+        <div class="col-span-6">
+          <span class="sg-mono sg-cv__also-label">Interests</span>
+          <ul class="sg-cv__also-list">{site.interests.map((i) => <li class="sg-body">{i}</li>)}</ul>
+        </div>
+        <div class="col-span-6">
+          <span class="sg-mono sg-cv__also-label">Places</span>
+          <p class="sg-body sg-cv__places">{site.places.join(' · ')}</p>
+        </div>
+      </div>
+    </section>
+
+    <p class="sg-mono sg-cv__pending">
+      Pending confirmation with Pelumi: exact degree title and graduation date, internship dates, prior roles,
+      and any awards, fellowships or language proficiencies. Nothing has been assumed in their place.
+    </p>
+  </section>
+
+  <Field />
+</Layout>
+
+<style>
+  .sg-cv__lede { font-size: clamp(22px, 2.4vw, 34px); }
+  .sg-cv__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+    /* the LinkedIn URL is one unbreakable token and overflowed at tablet */
+    overflow-wrap: anywhere;
+  }
+
+  .sg-cv__block { margin-top: var(--sg-band); }
+  .sg-cv__label { display: block; opacity: 0.55; padding-bottom: 12px; border-bottom: 4px solid var(--sg-ink); }
+
+  .sg-cv__entry { padding-top: 22px; align-items: baseline; }
+  .sg-cv__entry-title { font-size: 24px; }
+  .sg-cv__entry-meta { opacity: 0.55; margin-top: 6px; }
+  .sg-cv__entry-body { font-size: 16px; margin-top: 8px; }
+
+  .sg-cv__stream { margin-top: 16px; }
+  .sg-cv__stream li { padding: 12px 0; border-top: 1px solid var(--sg-ink); }
+  .sg-cv__stream-title {
+    display: block;
+    font-weight: 800;
+    font-stretch: 88%;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+  }
+  .sg-cv__stream-body { display: block; font-size: 15px; margin-top: 4px; max-width: 64ch; opacity: 0.85; }
+
+  .sg-cv__work-row { padding: 18px 0; border-bottom: 1px solid var(--sg-ink); align-items: baseline; }
+  .sg-cv__work-num { font-size: 30px; }
+  .sg-cv__work-title { font-size: 19px; display: inline-block; }
+  .sg-cv__work-q { font-size: 15px; margin-top: 6px; opacity: 0.75; max-width: 60ch; }
+  .sg-cv__work-meta { text-align: right; opacity: 0.65; }
+  .sg-cv__note { margin-top: 16px; opacity: 0.55; text-transform: none; letter-spacing: 0.04em; max-width: 80ch; }
+
+  .sg-cv__focus { padding-top: 22px; row-gap: 28px; }
+  .sg-cv__focus-title { font-size: 18px; }
+  .sg-cv__focus-list { margin-top: 10px; }
+  .sg-cv__focus-list li { font-size: 15px; padding: 7px 0; border-top: 1px solid var(--sg-ink); }
+
+  .sg-cv__also { padding-top: 22px; row-gap: 28px; }
+  .sg-cv__also-label { display: block; opacity: 0.55; margin-bottom: 10px; }
+  .sg-cv__also-list li { font-size: 15px; padding: 7px 0; border-top: 1px solid var(--sg-ink); }
+  .sg-cv__places { font-size: 15px; }
+
+  .sg-cv__pending {
+    margin-top: var(--sg-band);
+    padding-top: 16px;
+    border-top: 1px solid var(--sg-ink);
+    opacity: 0.55;
+    text-transform: none;
+    letter-spacing: 0.04em;
+    max-width: 80ch;
+  }
+
+  @media (max-width: 640px) {
+    .sg-cv__contact { text-align: left; }
+    .sg-cv__work-meta { text-align: left; }
+  }
+
+  /* Printing this page is how you get the PDF until Pelumi supplies one. */
+  @media print {
+    .sg-cv__block { margin-top: 24px; break-inside: avoid; }
+    .sg-cv__work-row, .sg-cv__entry { break-inside: avoid; }
+  }
+</style>
+
+<style is:global>
+  @media print {
+    .signal { background: #fff; }
+    .sg-nav, .sg-field, .sg-pagehead { display: none !important; }
+    .sg-band { padding: 0 !important; }
+  }
+</style>

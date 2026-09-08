@@ -1,0 +1,24 @@
+---
+interface Props { text: string }
+const { text } = Astro.props;
+---
+
+<div class="recommendation" data-reveal data-reveal-group="case" data-reveal-order="1">
+  <p class="mono recommendation__label">Recommendation</p>
+  <p class="recommendation__text">{text}</p>
+</div>
+
+<style>
+  .recommendation {
+    border-top: 2px solid var(--accent);
+    padding-top: var(--space-sm);
+    max-width: 62ch;
+  }
+  .recommendation__label { color: var(--accent); margin-bottom: 10px; }
+  .recommendation__text {
+    font-size: var(--size-h2);
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+</style>

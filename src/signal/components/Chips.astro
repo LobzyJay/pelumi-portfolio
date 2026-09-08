@@ -1,0 +1,55 @@
+---
+// Filter chips for /signal/work.
+//
+// These used to offer all nine focus areas, which wrapped to three rows of
+// long chips — more filter apparatus than six documents can justify. They
+// now filter by the three groups the work is already organised into, which
+// is the same cut at a tenth of the furniture. Format and year stay.
+//
+// Contract matches src/scripts/filters.ts: [data-filters] root, .filter-pill
+// buttons carrying data-filter-key / data-filter-value.
+import { rooms } from '../../data/rooms';
+
+interface Props {
+  formats: string[];
+  years: number[];
+}
+const { formats, years } = Astro.props;
+
+const groups = [
+  { label: 'Group', key: 'group', values: rooms.map((r) => ({ value: r.id, label: r.title })) },
+  { label: 'Format', key: 'format', values: formats.map((f) => ({ value: f, label: f })) },
+  { label: 'Year', key: 'year', values: years.map((y) => ({ value: String(y), label: String(y) })) },
+];
+---
+
+<div class="sg-chips" data-filters>
+  {groups.map((g) => (
+    <div class="sg-chips__group">
+      <span class="sg-mono sg-chips__label">{g.label}</span>
+      <div class="sg-chips__row">
+        <button type="button" class="filter-pill is-active" data-filter-key={g.key} data-filter-value="">All</button>
+        {g.values.map((v) => (
+          <button type="button" class="filter-pill" data-filter-key={g.key} data-filter-value={v.value}>{v.label}</button>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .sg-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: var(--sg-band);
+  }
+  .sg-chips__group { display: flex; flex-direction: column; gap: 10px; }
+  .sg-chips__label { opacity: 0.55; }
+  .sg-chips__row { display: flex; flex-wrap: wrap; gap: 8px; }
+</style>
+
+<script>
+  import { initFilters } from '../../scripts/filters';
+  initFilters();
+</script>
