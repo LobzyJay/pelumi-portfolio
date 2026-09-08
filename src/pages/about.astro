@@ -1,130 +1,195 @@
 ---
 import { Image } from 'astro:assets';
-import Base from '../layouts/Base.astro';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
-import RouteTimeline from '../components/RouteTimeline.astro';
-import PhotoBento from '../components/PhotoBento.astro';
-import headshot from '../assets/photos/hero-portrait.jpg';
+import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import portrait from '../assets/photos/hero-portrait.jpg';
+import graduation from '../assets/photos/graduation-ut-tower.jpg';
+import studioWide from '../assets/photos/studio-portrait-wide.jpg';
 import { site } from '../data/site';
+import Field from '../components/Field.astro';
 
-const educationExperience = [
+const timeline = [
   {
-    dateLabel: site.degree.program,
+    date: site.degree.program,
     title: site.degree.school,
-    body: 'Master of Global Policy Studies. (Degree title, concentration and graduation date to be confirmed.)',
+    body: 'Master of Global Policy Studies. Degree title, concentration and graduation date to be confirmed.',
   },
   {
-    dateLabel: 'Spring 2026',
+    date: 'Spring 2026',
     title: `${site.experience.role}, ${site.experience.org}`,
-    body: site.experience.workstreams.map((w) => w.title).join(' · ') + ' — ' + site.experience.location,
+    body: site.experience.workstreams.map((w) => w.title).join(' · ') + ` — ${site.experience.location}`,
   },
 ];
+
 ---
 
-<Base title="About" description="Education, experience and the interests behind Pelumi Igbalajobi's work.">
-  <Nav />
-  <main id="main" class="wrap about">
-    <section class="about__hero grid-12">
-      <div class="about__portrait col-span-4" data-reveal data-reveal-group="about-hero" data-reveal-order="0">
-        <Image src={headshot} alt={site.name} width={480} height={600} />
+<Layout title="About" description="Education, experience and the interests behind Pelumi Igbalajobi's work.">
+  <PageHead word="About" metaLeft={site.kicker} />
+
+  <section class="sg-about sg-band sg-band--bone">
+    <div class="sg-about__intro grid-12">
+      <figure class="sg-about__portrait col-span-5">
+        <Image src={portrait} alt={site.name} width={620} height={775} />
+      </figure>
+      <div class="sg-about__intro-text col-span-7">
+        {/* The name is already in the nav and the footer; repeating it above
+            a page headed ABOUT adds nothing. The positioning line leads. */}
+        <h2 class="sg-title sg-about__name">{site.positioning}</h2>
       </div>
-      <div class="about__intro col-span-8">
-        <h1 class="about__name" data-reveal data-reveal-group="about-hero" data-reveal-order="1">{site.name}</h1>
-        <p class="about__summary" data-reveal data-reveal-group="about-hero" data-reveal-order="2">{site.positioning}</p>
+    </div>
+
+    <section class="sg-about__block">
+        <span class="sg-mono--12 sg-mono sg-about__label">01 Background</span>
+        <p class="sg-body sg-about__narrative">{site.backgroundShort}</p>
+        <p class="sg-mono sg-about__pending">
+          Full first-person narrative pending — to be written with Pelumi.
+        </p>
+    </section>
+
+    <section class="sg-about__block">
+      <span class="sg-mono--12 sg-mono sg-about__label">02 Education &amp; experience</span>
+      <ul class="sg-about__timeline">
+        {timeline.map((t) => (
+          <li class="sg-about__entry grid-12">
+            <span class="sg-mono col-span-3">{t.date}</span>
+            <div class="col-span-9">
+              <h3 class="sg-title sg-about__entry-title">{t.title}</h3>
+              <p class="sg-body sg-about__entry-body">{t.body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="sg-about__block">
+      <div class="sg-about__lists grid-12">
+        <div class="col-span-6">
+          <span class="sg-mono sg-about__list-label">Interests</span>
+          <ul class="sg-about__list">
+            {site.interests.map((item) => <li class="sg-body sg-about__list-item">{item}</li>)}
+          </ul>
+        </div>
+        <div class="col-span-6">
+          <span class="sg-mono sg-about__list-label">Hobbies</span>
+          <ul class="sg-about__tags">
+            {site.hobbies.map((item) => <li class="sg-about__tag">{item}</li>)}
+          </ul>
+        </div>
+        <div class="col-span-12">
+          <span class="sg-mono sg-about__list-label">Places</span>
+          <ul class="sg-about__tags">
+            {site.places.map((item) => <li class="sg-about__tag">{item}</li>)}
+          </ul>
+        </div>
       </div>
     </section>
 
-    <section class="about__narrative" data-reveal data-reveal-group="about-narrative" data-reveal-order="0">
-      <p class="mono about__section-label">01 Background</p>
-      <p class="about__narrative-text">
-        <!-- PENDING: ~300-word first-person narrative, to be drafted with Pelumi (PRD §5.2, §6.5). -->
-        Pelumi Igbalajobi is a global-policy analyst working at the intersection of emerging technology,
-        human security and governance. Across her academic and field work, the same question keeps
-        showing up: who is protected, who is accountable, and what institution has to change when a new
-        technology or shock arrives. This paragraph is a placeholder for the narrative she'll write in
-        her own voice — see the open questions in the project brief.
-      </p>
-    </section>
+    <p class="sg-title sg-about__shy">{site.shyLine}</p>
 
-    <section class="about__section">
-      <p class="mono about__section-label">02 Education &amp; experience</p>
-      <RouteTimeline entries={educationExperience} />
-    </section>
-
-    <section class="about__section about__lists grid-12">
-      <div class="col-span-4">
-        <p class="mono about__section-label">03 Interests</p>
-        <ul class="about__list">{site.interests.map((i) => <li>{i}</li>)}</ul>
-      </div>
-      <div class="col-span-4">
-        <p class="mono about__section-label">Hobbies</p>
-        <ul class="about__list">{site.hobbies.map((h) => <li>{h}</li>)}</ul>
-      </div>
-      <div class="col-span-4">
-        <p class="mono about__section-label">Places</p>
-        <ul class="about__list about__list--places">{site.places.map((p) => <li>{p}</li>)}</ul>
+    <section class="sg-about__block">
+      <span class="sg-mono--12 sg-mono sg-about__label">03 In frame</span>
+      <div class="sg-about__photos grid-12">
+        <figure class="col-span-7"><Image src={graduation} alt="Pelumi at UT Austin's Littlefield Fountain on graduation day" width={900} height={675} /></figure>
+        <figure class="col-span-5"><Image src={studioWide} alt="Pelumi, studio portrait, wider crop" width={620} height={775} /></figure>
       </div>
     </section>
 
-    <p class="about__shy-line" data-reveal data-reveal-group="about-shy" data-reveal-order="0">
-      {site.shyLine}
-    </p>
-
-    <section class="about__section">
-      <p class="mono about__section-label">04 In frame</p>
-      <PhotoBento />
+    <section class="sg-about__resume">
+      <span class="sg-mono">Full CV, education and selected work</span>
+      <a href="/resume/" class="sg-pill sg-pill--ink">Résumé →</a>
     </section>
+  </section>
 
-    <section class="about__resume">
-      <p class="mono">Full legal name: {site.legalName}</p>
-      <a href={site.contact.resumeHref} class="pill pill--ink">Résumé ↓</a>
-    </section>
-  </main>
-  <Footer />
-</Base>
+  <Field />
+</Layout>
 
 <style>
-  .about { padding-block: var(--space-xl) var(--space-3xl); }
-  .about__hero {
-    gap: var(--space-lg);
-    align-items: end;
-    margin-bottom: var(--space-2xl);
-  }
-  .about__portrait :global(img) {
+  .sg-about__intro { align-items: end; }
+  .sg-about__portrait :global(img) {
     width: 100%;
-    aspect-ratio: 4/5;
+    aspect-ratio: 4 / 5;
     object-fit: cover;
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--sg-ink);
   }
-  .about__name { font-size: var(--size-h1); letter-spacing: -0.025em; }
-  .about__summary { font-size: var(--size-h3); color: var(--ink-soft); margin-top: var(--space-sm); max-width: 40ch; }
+  .sg-about__name { font-size: clamp(24px, 3vw, 40px); max-width: 24ch; }
 
-  .about__section { margin-top: var(--space-2xl); }
-  .about__section-label { color: var(--ink-soft); margin-bottom: var(--space-md); }
-  .about__narrative-text { font-size: var(--size-body); line-height: 1.6; max-width: 62ch; }
+  .sg-about__block { margin-top: var(--sg-band); }
+  .sg-about__label { display: block; opacity: 0.6; margin-bottom: 14px; }
+  .sg-about__narrative { font-size: 24px; max-width: 58ch; }
+  .sg-about__pending { margin-top: 16px; opacity: 0.55; text-transform: none; letter-spacing: 0.04em; }
 
-  .about__lists { row-gap: var(--space-lg); }
-  .about__list { display: flex; flex-direction: column; gap: 10px; font-size: var(--size-small); }
-  .about__list--places { font-size: var(--size-h3); font-weight: 500; letter-spacing: -0.01em; }
+  .sg-about__timeline { border-top: 4px solid var(--sg-ink); }
+  .sg-about__entry {
+    padding: 22px 0;
+    border-bottom: 1px solid var(--sg-ink);
+    align-items: baseline;
+  }
+  .sg-about__entry-title { font-size: 24px; }
+  .sg-about__entry-body { font-size: 16px; margin-top: 8px; max-width: 60ch; }
 
-  .about__shy-line {
-    margin-top: var(--space-2xl);
-    font-size: var(--size-h2);
-    letter-spacing: -0.02em;
-    max-width: 20ch;
+  /* The numerals here were arbitrary — these are three parallel lists, not a
+     sequence. Label leads, orange does the pointing. Short entries are set
+     as tags because ruled full-width rows made them wrap raggedly. */
+  .sg-about__lists { row-gap: 44px; }
+  .sg-about__list-label {
+    display: block;
+    color: var(--sg-orange);
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--sg-ink);
+  }
+  .sg-about__list { margin-top: 4px; }
+  .sg-about__list-item {
+    font-size: 15px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--sg-ink);
+    max-width: 44ch;
+  }
+  .sg-about__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .sg-about__tag {
+    border: 1px solid var(--sg-ink);
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
   }
 
-  .about__resume {
-    margin-top: var(--space-2xl);
+  .sg-about__shy {
+    font-size: 64px;
+    margin-top: var(--sg-band);
+    max-width: 18ch;
+  }
+
+  .sg-about__photos { row-gap: var(--space-md); align-items: start; }
+  .sg-about__photos :global(img) {
+    width: 100%;
+    object-fit: cover;
+    border: 1px solid var(--sg-ink);
+  }
+  .sg-about__photos figure:first-child :global(img) { aspect-ratio: 4 / 3; }
+  .sg-about__photos figure:last-child :global(img) { aspect-ratio: 4 / 5; }
+
+  .sg-about__resume {
+    margin-top: var(--sg-band);
+    padding-top: 20px;
+    border-top: 4px solid var(--sg-ink);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
     gap: var(--space-md);
-    border-top: 1px solid var(--rule);
-    padding-top: var(--space-lg);
+    flex-wrap: wrap;
   }
-  .about__resume .mono { color: var(--ink-soft); }
 
+  @media (max-width: 640px) {
+    .sg-about__intro { row-gap: 24px; }
+    .sg-about__name { font-size: 32px; }
+    .sg-about__narrative { font-size: 18px; }
+    .sg-about__entry { row-gap: 8px; }
+    .sg-about__shy { font-size: 32px; }
+  }
 </style>

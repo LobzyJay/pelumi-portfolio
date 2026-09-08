@@ -7,11 +7,11 @@
 // filled in. It prints cleanly, so it doubles as the PDF until Pelumi
 // supplies her own.
 import { getCollection } from 'astro:content';
-import Layout from '../../signal/Layout.astro';
-import PageHead from '../../signal/components/PageHead.astro';
-import Field from '../../signal/components/Field.astro';
-import { rooms } from '../../data/rooms';
-import { site } from '../../data/site';
+import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import Field from '../components/Field.astro';
+import { rooms } from '../data/rooms';
+import { site } from '../data/site';
 
 const docs = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
 const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
@@ -72,7 +72,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
               {String(doc.data.order).padStart(2, '0')}
             </span>
             <div class="col-span-8">
-              <a href={`/signal/work/${doc.id}/`} class="sg-cv__work-title sg-title">{doc.data.title}</a>
+              <a href={`/work/${doc.id}/`} class="sg-cv__work-title sg-title">{doc.data.title}</a>
               <p class="sg-body sg-cv__work-q">{doc.data.question}</p>
             </div>
             <span class="sg-mono sg-cv__work-meta col-span-3">

@@ -5,7 +5,7 @@
 
 :root {
   /* ---- type ---- */
-  --font-sans: 'Familjen Grotesk', system-ui, sans-serif;
+  --font-sans: 'Archivo', system-ui, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
 
   /* modular scale, desktop clamps (README §A1 "Scale") */

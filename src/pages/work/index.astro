@@ -1,47 +1,59 @@
 ---
 import { getCollection } from 'astro:content';
-import Base from '../../layouts/Base.astro';
-import Nav from '../../components/Nav.astro';
-import Footer from '../../components/Footer.astro';
-import Filters from '../../components/Filters.astro';
-import FolderCard from '../../components/FolderCard.astro';
+import Layout from '../../layouts/Layout.astro';
+import PageHead from '../../components/PageHead.astro';
+import Chips from '../../components/Chips.astro';
+import Row from '../../components/Row.astro';
+import Field from '../../components/Field.astro';
 
 const docs = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
-
-const focusAreas = [...new Set(docs.flatMap((d) => d.data.focusAreas))].sort();
 const formats = [...new Set(docs.map((d) => d.data.format))];
 const years = [...new Set(docs.map((d) => d.data.date.getFullYear()))].sort();
 ---
 
-<Base title="Selected work" description="Six documents spanning AI governance, trafficking prevention, national development and legislative affairs.">
-  <Nav />
-  <main id="main" class="wrap work-index">
-    <div class="work-index__head">
-      <h1>Selected work</h1>
-      <p class="mono">Six · 2025–2026 · Academic exercises unless marked</p>
+<Layout
+  title="Work"
+  description="Six documents — decision memos, an advisory to the UN, a research paper, a national development plan and a field report."
+>
+  <PageHead
+    word="Work"
+    metaLeft="Six documents · 2025–2026"
+  />
+
+  <section class="sg-worklist sg-band sg-band--bone">
+    <Chips formats={formats} years={years} />
+    <div class="sg-worklist__rows">
+      {docs.map((doc) => <Row doc={doc} />)}
     </div>
-    <Filters focusAreas={focusAreas} formats={formats} years={years} />
-    <div class="work-index__grid grid-12">
-      {docs.map((doc, i) => <FolderCard doc={doc} index={i} />)}
+
+    <div class="sg-worklist__empty" data-filters-empty hidden>
+      <p class="sg-title sg-worklist__empty-title">Nothing matches that combination.</p>
+      <p class="sg-body sg-worklist__empty-body">
+        There are only {docs.length} documents, so some pairings come up short — an advisory memo from 2026,
+        for instance. Widen one of the filters, or start again.
+      </p>
+      <button type="button" class="sg-pill sg-pill--ink" data-filters-clear>Clear filters</button>
     </div>
-  </main>
-  <Footer />
-</Base>
+  </section>
+
+  <Field />
+</Layout>
 
 <style>
-  .work-index { padding-block: var(--space-xl) var(--space-3xl); }
-  .work-index__head {
+  .sg-worklist__rows {
+    border-top: 4px solid var(--sg-ink);
+    border-bottom: 4px solid var(--sg-ink);
+  }
+  .sg-worklist__rows > :global(.sg-row:first-child) { border-top: none; }
+
+  .sg-worklist__empty {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: var(--space-lg);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: clamp(40px, 6vw, 72px) 0;
+    max-width: 52ch;
   }
-  .work-index__head h1 { font-size: var(--size-h2); letter-spacing: -0.03em; }
-  .work-index__head p { color: var(--ink-soft); }
-  .work-index__grid { row-gap: var(--space-md); }
-  @media (max-width: 900px) {
-    .work-index__grid > :global(.col-span-4) { grid-column: span 6; }
-  }
+  .sg-worklist__empty-title { font-size: clamp(22px, 2.4vw, 32px); }
+  .sg-worklist__empty-body { font-size: 16px; opacity: 0.7; }
 </style>

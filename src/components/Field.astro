@@ -2,7 +2,7 @@
 // The contact card: a large rounded orange panel inset from the page, with
 // pill actions and the colophon line inside it — the page ends on the card,
 // as the reference draws it. On the homepage this replaces the site footer.
-import { site } from '../../data/site';
+import { site } from '../data/site';
 
 const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
 ---
@@ -16,7 +16,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
       <div class="sg-field__actions">
         <a href={mailHref} class="sg-pill sg-pill--lg sg-pill--ink">Email →</a>
         <a href={site.contact.linkedin} rel="me" class="sg-pill sg-pill--lg sg-pill--bone">LinkedIn</a>
-        <a href="/signal/resume/" class="sg-pill sg-pill--lg sg-pill--bone">Résumé</a>
+        <a href="/resume/" class="sg-pill sg-pill--lg sg-pill--bone">Résumé</a>
       </div>
     </div>
 
@@ -65,6 +65,6 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
 </style>
 
 <script>
-  import { initClock } from '../../scripts/clock';
+  import { initClock } from '../scripts/clock';
   initClock();
 </script>

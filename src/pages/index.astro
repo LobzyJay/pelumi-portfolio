@@ -1,33 +1,22 @@
 ---
-import Base from '../layouts/Base.astro';
-import Nav from '../components/Nav.astro';
-import Hall from '../components/Hall.astro';
-import Stage from '../components/Stage.astro';
-import ContactRoom from '../components/ContactRoom.astro';
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Proof from '../components/Proof.astro';
+import Focus from '../components/Focus.astro';
+import Highlights from '../components/Highlights.astro';
+import Field from '../components/Field.astro';
+
+const docs = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<Base
-  title="Home"
-  description="Pelumi Igbalajobi is a global-policy analyst working at the intersection of emerging technology, human security and governance."
+<Layout
+  title="The Signal"
+  description="Alternative homepage direction — Pelumi Igbalajobi, global policy analyst."
 >
-  <a class="marking-line no-print" href="/work">PUBLIC · SELECTED WORK 2025–2026</a>
-  <Nav />
-  <main id="main">
-    <Hall />
-    <Stage />
-  </main>
-  <ContactRoom />
-</Base>
-
-<style>
-  .marking-line {
-    display: block;
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    padding: 6px;
-    color: var(--ink-soft);
-    border-bottom: 1px solid var(--rule);
-  }
-</style>
+  <Hero />
+  <Proof />
+  <Focus />
+  <Highlights docs={docs} id="work" />
+  <Field />
+</Layout>

@@ -1,5 +1,5 @@
 ---
-// Filter chips for /signal/work.
+// Filter chips for /work.
 //
 // These used to offer all nine focus areas, which wrapped to three rows of
 // long chips — more filter apparatus than six documents can justify. They
@@ -8,7 +8,7 @@
 //
 // Contract matches src/scripts/filters.ts: [data-filters] root, .filter-pill
 // buttons carrying data-filter-key / data-filter-value.
-import { rooms } from '../../data/rooms';
+import { rooms } from '../data/rooms';
 
 interface Props {
   formats: string[];
@@ -50,6 +50,6 @@ const groups = [
 </style>
 
 <script>
-  import { initFilters } from '../../scripts/filters';
+  import { initFilters } from '../scripts/filters';
   initFilters();
 </script>

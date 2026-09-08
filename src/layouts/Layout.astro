@@ -1,19 +1,21 @@
 ---
-// Signal's own shell. Deliberately not Base.astro: no ClientRouter, no
-// reveal script, no Atlas tokens in play beyond the shared grid utilities
-// and mono face. Every Signal page is noindex and unlinked from Atlas.
+// The site shell. No view transitions and no reveal script: this design is
+// static by decision, and hover/press are the only state changes.
+//
+// Every page closes on the contact card (src/components/Field.astro), which
+// carries the colophon row — so there is no separate footer band here.
 import '../styles/global.css';
-import './signal.css';
-import Nav from './components/Nav.astro';
+import '../styles/signal.css';
+import Nav from '../components/Nav.astro';
 
-// Every Signal page closes on the contact card (src/signal/components/
-// Field.astro), which carries the colophon row — so there is no separate
-// footer band to render here.
 interface Props {
   title: string;
   description: string;
+  /** Set on pages that should stay out of search results (e.g. 404). */
+  noindex?: boolean;
 }
-const { title, description } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
 <!doctype html>
@@ -23,7 +25,8 @@ const { title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} — Pelumi Igbalajobi</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="noindex" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!-- Ink, matching the hero: the browser chrome and any overscroll at the
          top of the page continue the hero rather than cutting it off. -->

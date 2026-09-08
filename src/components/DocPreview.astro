@@ -8,8 +8,10 @@ interface Props { doc: CollectionEntry<'work'> }
 const { doc } = Astro.props;
 const d = doc.data;
 
-const images = import.meta.glob<{ default: ImageMetadata }>('../../assets/documents/*.png', { eager: true });
-const preview = d.previewImage ? images[`../../assets/documents/${d.previewImage}.png`]?.default : undefined;
+// The glob keys are the literal specifier strings, so this lookup path has
+// to stay character-identical to the glob above.
+const images = import.meta.glob<{ default: ImageMetadata }>('../assets/documents/*.png', { eager: true });
+const preview = d.previewImage ? images[`../assets/documents/${d.previewImage}.png`]?.default : undefined;
 ---
 
 <section class="sg-doc grid-12">

@@ -1,11 +1,11 @@
 ---
-// Homepage highlights. The full six live on /signal/work — repeating them
+// Homepage highlights. The full six live on /work — repeating them
 // here made the homepage a duplicate index, so this shows three as cards
 // built around each document's framing question (the most quotable thing in
 // the material, and already written as one sentence), then hands off to the
 // index.
 //
-// Cards are rounded; the ruled rows on /signal/work are not. That's the
+// Cards are rounded; the ruled rows on /work are not. That's the
 // rule: lists are ruled, highlights are carded.
 import type { CollectionEntry } from 'astro:content';
 
@@ -38,7 +38,7 @@ const total = docs.length;
       const isReal = d.label === 'real';
       return (
         <a
-          href={`/signal/work/${doc.id}/`}
+          href={`/work/${doc.id}/`}
           class="sg-hl__card col-span-4"
           class:list={[{ 'sg-hl__card--accent': isReal }]}
         >
@@ -56,7 +56,7 @@ const total = docs.length;
   </div>
 
   <div class="sg-hl__cta">
-    <a href="/signal/work/" class="sg-pill sg-pill--ink sg-pill--lg">See all work →</a>
+    <a href="/work/" class="sg-pill sg-pill--ink sg-pill--lg">See all work →</a>
     <span class="sg-mono sg-hl__cta-note">Filterable by focus area, format and year</span>
   </div>
 </section>

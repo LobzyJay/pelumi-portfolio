@@ -1,35 +1,55 @@
 ---
-import Base from '../layouts/Base.astro';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
+// 404. Uses the same fitted display head as the other inner pages, so a
+// missing URL still lands somewhere that looks like the site rather than on
+// a bare server page. noindex, since an error page has no business in
+// search results.
+import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import Field from '../components/Field.astro';
 import { site } from '../data/site';
-// Inlined as raw markup, not <img src="data:...">: SVG data-URIs failed to
-// decode (naturalWidth 0) across every browser tested during QA.
-import platform from '../assets/iso/layer-platform.svg?raw';
+
+const routes = [
+  { href: '/work/', label: 'Work', note: 'Six documents, filterable' },
+  { href: '/about/', label: 'About', note: 'Background and education' },
+  { href: '/resume/', label: 'Résumé', note: 'One page, printable' },
+];
 ---
 
-<Base title="Not found" description="This memo could not be located.">
-  <Nav />
-  <main id="main" class="wrap not-found">
-    <p class="mono">404</p>
-    <h1>{site.notFoundLine}</h1>
-    <div class="not-found__art" set:html={platform} />
-    <a href="/" class="pill pill--accent">Back to the brief</a>
-  </main>
-  <Footer />
-</Base>
+<Layout
+  title="Page not found"
+  description="That page does not exist — Pelumi Igbalajobi, global policy analyst."
+  noindex
+>
+  <PageHead word="404" metaLeft="Page not found" metaRight={site.kicker} />
+
+  <section class="sg-404 sg-band sg-band--bone">
+    <p class="sg-404__lede sg-title">That page does not exist.</p>
+    <ul class="sg-404__routes">
+      {routes.map((r) => (
+        <li>
+          <a href={r.href} class="sg-404__route grid-12">
+            <span class="sg-404__label sg-title col-span-4">{r.label}</span>
+            <span class="sg-mono sg-404__note col-span-7">{r.note}</span>
+            <span class="sg-404__arrow col-span-1" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <Field />
+</Layout>
 
 <style>
-  .not-found {
-    min-height: 60svh;
-    padding-block: var(--space-2xl);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-md);
+  .sg-404__lede { font-size: clamp(22px, 2.4vw, 34px); max-width: 20ch; }
+  .sg-404__routes { margin-top: var(--sg-band); }
+  .sg-404__route {
+    align-items: baseline;
+    padding: 20px 0;
+    border-top: 2px solid var(--sg-ink);
   }
-  .not-found .mono { color: var(--ink-soft); }
-  .not-found h1 { font-size: var(--size-h1); letter-spacing: -0.025em; max-width: 16ch; }
-  .not-found__art { width: min(360px, 70%); opacity: 0.8; margin-block: var(--space-md); }
-  .not-found__art :global(svg) { width: 100%; display: block; }
+  .sg-404__routes li:last-child .sg-404__route { border-bottom: 2px solid var(--sg-ink); }
+  .sg-404__label { font-size: clamp(20px, 2vw, 28px); }
+  .sg-404__note { opacity: 0.6; }
+  .sg-404__arrow { font-size: 20px; text-align: right; }
 </style>

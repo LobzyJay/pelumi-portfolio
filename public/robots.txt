@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /specimen
-Disallow: /signal
 
 Sitemap: https://pelumiigbalajobi.com/sitemap-index.xml

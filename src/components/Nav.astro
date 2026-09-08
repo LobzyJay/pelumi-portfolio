@@ -1,69 +1,43 @@
 ---
 import { site } from '../data/site';
 
-const { pathname } = Astro.url;
+// No Contact item: the contact card closes every page and carries the
+// colophon, so it is the footer — a nav link to it would be redundant.
 const links = [
-  { href: '/work', label: 'Work' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/work/', label: 'Work' },
+  { href: '/about/', label: 'About' },
 ];
 ---
 
-<nav class="nav">
-  <a href="/" class="nav__brand">
-    <span class="nav__mark" aria-hidden="true"></span>
-    {site.name}
-  </a>
-  <div class="nav__links">
-    {links.map((l) => (
-      <a
-        href={l.href}
-        class="pill pill--small"
-        aria-current={pathname.startsWith(l.href) ? 'page' : undefined}
-      >
-        {l.label}
-      </a>
-    ))}
-    <a href={site.contact.resumeHref} class="pill pill--ink pill--small">{site.ctaResume} ↓</a>
+<nav class="sg-nav">
+  <a href="/" class="sg-nav__brand">{site.name}</a>
+  <div class="sg-nav__links">
+    {links.map((l) => <a href={l.href} class="sg-nav__link">{l.label}</a>)}
+    <a href="/resume/" class="sg-nav__link sg-nav__link--last">{site.ctaResume}</a>
   </div>
 </nav>
 
 <style>
-  .nav {
+  .sg-nav {
+    background: var(--sg-ink);
+    color: var(--sg-bone);
+    height: var(--sg-nav-h);
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    height: 84px;
     padding-inline: var(--gutter);
-  }
-  .nav__brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--sg-bone) 45%, transparent);
+    font-size: 14px;
     font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
-  .nav__mark {
-    width: 14px;
-    height: 14px;
-    background: var(--accent);
-    display: inline-block;
-    border-radius: 4px;
-  }
-  .nav__links {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .nav__links a[aria-current='page'] {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
+  .sg-nav__links { display: flex; gap: 32px; }
+
   @media (max-width: 640px) {
-    .nav { height: 64px; }
-    .nav__links :is(a)[href='/work'],
-    .nav__links :is(a)[href='/about'] {
-      display: none;
-    }
+    .sg-nav { font-size: 12px; }
+    .sg-nav__links { gap: 20px; }
+    /* Keep the brand, Work and Résumé; About drops out. */
+    .sg-nav__link:not(:first-child):not(.sg-nav__link--last) { display: none; }
   }
 </style>

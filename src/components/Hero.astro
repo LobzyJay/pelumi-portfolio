@@ -4,8 +4,8 @@
 // small tilted card at the seam between the lines. That overlap is the
 // signature move of this direction: the person interrupting the type.
 import { Image } from 'astro:assets';
-import portrait from '../../assets/photos/hero-portrait.jpg';
-import { site } from '../../data/site';
+import portrait from '../assets/photos/hero-portrait.jpg';
+import { site } from '../data/site';
 
 const [first, ...rest] = site.name.split(' ');
 const last = rest.join(' ');
@@ -110,6 +110,6 @@ const last = rest.join(' ');
 </style>
 
 <script>
-  import { initSignalFit } from '../fit';
+  import { initSignalFit } from '../scripts/fit';
   initSignalFit();
 </script>
