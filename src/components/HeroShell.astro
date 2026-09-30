@@ -50,6 +50,19 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
     flex-direction: column;
   }
 
+  /* The card arrives after the lines have started drawing, and slowly enough
+     that the drawing is seen first: 450ms of lines alone, then the card rises
+     24px and fades in over 800ms. Runs once per page load. */
+  @media (prefers-reduced-motion: no-preference) {
+    .pi-hero__inner > :global(*) {
+      animation: pi-rise 800ms var(--ease-out) 450ms both;
+    }
+  }
+  @keyframes pi-rise {
+    from { opacity: 0; transform: translate3d(0, 24px, 0); }
+    to { opacity: 1; transform: none; }
+  }
+
   @media (max-width: 1023px) {
     .pi-hero,
     .pi-hero[data-size='home'] {

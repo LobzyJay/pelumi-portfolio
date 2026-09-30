@@ -38,14 +38,14 @@ const eyebrow = `${pad(d.order)} · ${d.format} · ${d.dateLabel}`;
 <Layout title={d.title} description={d.question}>
   <HeroShell size="page" top={112} bottom={48}>
     <div class="memo">
-      <span class="memo__eyebrow pi-label pi-label--12">
-        <Icon name={formatIcon[d.format]} tone="cream" size={18} />{eyebrow}
+      <span class="memo__eyebrow pi-label pi-label--12 pi-enter">
+        <Icon name={formatIcon[d.format]} size={18} />{eyebrow}
       </span>
-      <h1 class="memo__question">{d.question}</h1>
-      <div class="memo__route">
-        <span><Icon name="institution" tone="cream" />{d.addressee}</span>
+      <h1 class="memo__question pi-enter" style="--enter-delay:950ms">{d.question}</h1>
+      <div class="memo__route pi-enter" style="--enter-delay:1150ms">
+        <span><Icon name="institution" />{d.addressee}</span>
         <span class="memo__slash" aria-hidden="true">/</span>
-        <span><Icon name="document" tone="cream" />{d.authorRole}</span>
+        <span><Icon name="document" />{d.authorRole}</span>
       </div>
     </div>
 

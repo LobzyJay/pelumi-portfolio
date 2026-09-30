@@ -23,7 +23,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
         </div>
         <div class="head__actions">
           <a class="pi-btn pi-btn--pink" href={site.contact.resumePdf} target="_blank" rel="noopener">
-            Download PDF<Icon name="arrow-down" tone="ink" />
+            Download PDF<Icon name="arrow-down" />
           </a>
           <span class="pi-label pi-label--12 head__by">{site.name} · 2026</span>
         </div>
@@ -35,13 +35,13 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     <div class="intro">
       <p class="intro__lead">{site.positioning}</p>
       <ul class="intro__contact pi-label">
-        <li><a href={mailHref}><Icon name="mail" tone="ink" size={16} />{site.contact.email}</a></li>
+        <li><a href={mailHref}><Icon name="mail" size={16} />{site.contact.email}</a></li>
         <li>
           <a href={site.contact.linkedin} target="_blank" rel="noopener me">
-            <Icon name="arrow-up-right" tone="ink" size={16} />{site.contact.linkedinLabel}
+            <Icon name="arrow-up-right" size={16} />{site.contact.linkedinLabel}
           </a>
         </li>
-        <li><span><Icon name="pin" tone="ink" size={16} />{site.city}</span></li>
+        <li><span><Icon name="pin" size={16} />{site.city}</span></li>
       </ul>
     </div>
 

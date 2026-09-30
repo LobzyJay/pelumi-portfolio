@@ -29,12 +29,11 @@ const preview = d.previewImage ? images[`../assets/documents/${d.previewImage}.p
     <span class="pi-label pi-label--12">Document</span>
     {d.pdf ? (
       <a class="pi-btn pi-btn--ink" href={d.pdf} target="_blank" rel="noopener">
-        Read the full PDF<Icon name="arrow-down" tone="cream" />
+        Read the full PDF<Icon name="arrow-down" />
       </a>
     ) : (
       <p class="doc__note pi-body">
-        Not yet published — the source presentation and permission to publish it are still outstanding.
-        See the note in the context above.
+        This presentation isn't published here yet.
       </p>
     )}
     {d.pages && d.words && (
@@ -51,7 +50,11 @@ const preview = d.previewImage ? images[`../assets/documents/${d.previewImage}.p
     align-items: start;
   }
   .doc__figure { grid-column: span 4; }
-  .doc__figure :global(img) { width: 100%; border-radius: 20px; }
+  .doc__figure { border-radius: 20px; overflow: hidden; }
+  .doc__figure :global(img) { width: 100%; transition: transform 900ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .doc__figure:hover :global(img) { transform: scale(1.03); }
+  }
   .doc__pending {
     aspect-ratio: 4 / 5.18;
     border: 1.5px dashed var(--hair-strong);

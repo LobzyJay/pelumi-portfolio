@@ -1,25 +1,44 @@
 ---
-// The pattern that sits behind every hero and the contact card.
+// The pattern behind every hero and the contact card — and the light that
+// travels along it.
 //
-// It is a separate layer (not a CSS background on the hero) so it can move
-// on its own while the text stays still. Structure:
+// On a hero the dark card covers most of the pink ground, so the lines are
+// only visible in the frame around it. That frame is where the motion lives:
+// pattern-motion.ts measures where the cards sit and sends a wave of light
+// into every line that is actually visible, running from the outer edge
+// inward until it slips beneath the card.
 //
-//   .pf                 clips to the section it lives in
-//   └ .pf__pan          oversized by one tile on every side, so a pan of up to
-//                       one tile never exposes an edge
-//      └ .pf__lines     the static line tile — the look in the artboards
+// Structure (each wrapper owns one kind of movement):
 //
-// Static here; motion is layered onto this same structure.
+//   .pf             clips to the section it lives in
+//   └ .pf__enter    (a hook for entrance effects; currently plain)
+//      └ .pf__pan   the pattern, one tile larger than the section on every side
+//         ├ .pf__lines         the static line tile, shown once the lines have drawn in
+//         ├ svg.pf__draw       the lines drawing themselves in, all together (removed after)
+//         └ svg.pf__signals    the light that then runs them (built by pattern-motion.ts)
+//
+// Without JavaScript you get the lines. With it, the light runs. Under
+// prefers-reduced-motion nothing moves.
 interface Props {
   /** 'links' = hero lines (240px tile); 'tile' = the contact card's arches. */
   variant?: 'links' | 'tile';
+  /** Set false for copies that are hidden on load (the mobile menu). */
+  animate?: boolean;
 }
-const { variant = 'links' } = Astro.props;
+const { variant = 'links', animate = true } = Astro.props;
 ---
 
-<div class:list={['pf', `pf--${variant}`]} aria-hidden="true" data-pf>
-  <div class="pf__pan" data-pf-pan>
-    <div class="pf__lines"></div>
+<div
+  class:list={['pf', `pf--${variant}`]}
+  aria-hidden="true"
+  data-pf
+  data-variant={variant}
+  data-static={animate ? undefined : ''}
+>
+  <div class="pf__enter">
+    <div class="pf__pan" data-pf-pan>
+      <div class="pf__lines"></div>
+    </div>
   </div>
 </div>
 
@@ -29,14 +48,16 @@ const { variant = 'links' } = Astro.props;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    /* keep the pattern behind the content layer that follows it */
     z-index: 0;
   }
+  .pf__enter { position: absolute; inset: 0; }
 
   .pf__pan {
+    /* Exactly the section's size: nothing moves any more (no drift, parallax or
+       entrance offset), so no bleed is needed — and the drawing's coordinates
+       are then simply the section's, which is what keeps the grid anchored. */
     position: absolute;
-    /* one tile of bleed per side; --tile-x/-y are set per variant below */
-    inset: calc(var(--tile-y) * -1) calc(var(--tile-x) * -1);
+    inset: 0;
   }
   .pf__lines {
     position: absolute;
@@ -65,5 +86,127 @@ const { variant = 'links' } = Astro.props;
   .pf--tile .pf__lines {
     background-image: url('../assets/pattern/pi-tile.svg');
     background-size: var(--tile-x) var(--tile-y);
+  }
+
+  /* With script running, the lines are drawn live as SVG (and drawn in/out on
+     a loop), so the static image stays out of the way. If the script never
+     runs, a failsafe brings the image in after 3.5s. Reduced motion (and a
+     script that hands back) sets data-lines: show the image, no animation. */
+  :global(.js) .pf--links:not([data-static]) .pf__lines {
+    opacity: 0;
+    animation: pf-lines-failsafe 0.01s linear 3.5s forwards;
+  }
+  :global(.js) .pf--links[data-live] .pf__lines {
+    animation: none;
+    opacity: 0;
+  }
+  :global(.js) .pf--links[data-lines] .pf__lines {
+    animation: none;
+    opacity: 1;
+  }
+  @keyframes pf-lines-failsafe {
+    to { opacity: 1; }
+  }
+
+  /* Off-screen: freeze the light (the script stops the line drawing alongside). */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Off-screen: stop. The script sets data-paused from an
+       IntersectionObserver. */
+    .pf[data-paused] :global(.pf__signals *) {
+      animation-play-state: paused;
+    }
+  }
+
+</style>
+
+<!-- The moving light. These nodes are created by script, so they never carry
+     this component's scoping attribute — hence global, and hence the pf-
+     prefix. Custom properties per node (set by pattern-motion.ts):
+       --L  length of this layer's dash      --H  distance the head travels
+       --T  period                           --d  phase, negative = already under way
+       --arrive  seconds until the head reaches the node (for the ripple) -->
+<style is:global>
+  .pf__signals {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: visible;
+  }
+  /* The lines drawing themselves in — the same strokes pi-links.svg paints. */
+  .pf__draw {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: visible;
+  }
+  .pf-line { fill: none; stroke: #fff7ef; stroke-width: 1.5; }
+  .pf-line--rail { stroke-opacity: 0.42; }
+  .pf-line--route { stroke-opacity: 0.55; stroke-linecap: round; }
+  .pf-dot { fill: #fff7ef; fill-opacity: 0.8; }
+
+  .pf-sig {
+    fill: none;
+    stroke: #fff7ef;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* one dash, then a gap longer than any path */
+    stroke-dasharray: calc(var(--L) * 1px) 2000px;
+    stroke-dashoffset: calc(var(--L) * 1px);
+    opacity: 0;
+    /* Every layer of a streak shares one head position: its dash's leading end
+       sits at (path start + travelled), i.e. offset = L - travelled.
+       These carry units (the * 1px) on purpose. Left as bare numbers, the two
+       ends of the animation are different kinds of value and CSS cannot blend
+       them — the streak then jumps to its end instead of sliding. */
+    --o0: calc(var(--L) * 1px);
+    --o1: calc((var(--L) - var(--H)) * 1px);
+  }
+  /* A fine bright head with a faint, narrow wake. Kept slim on purpose: a wide
+     soft wake reads as glow, and this should read as a thin line of light.
+     --wk thickens both slightly on phones, where the pattern is drawn at half
+     size. */
+  .pf-tail { --L: 56; stroke-width: calc(2.6px * var(--wk, 1)); stroke-opacity: 0.22; }
+  .pf-head { --L: 14; stroke-width: calc(1.5px * var(--wk, 1)); stroke-opacity: 0.95; }
+
+  /* The light, one pass per wave. The script flips data-cycle between a and b
+     at the start of every loop; the two keyframe sets are identical, and
+     switching between differently-named ones is what restarts the animation.
+     Each streak starts when its wave's front reaches it (--delay, measured
+     from the start of the loop). */
+  .pf-wave .pf-sig {
+    animation-duration: 0.96s;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-delay: var(--delay);
+  }
+  .pf[data-cycle='a'] .pf-wave .pf-sig { animation-name: pf-wave-a; }
+  .pf[data-cycle='b'] .pf-wave .pf-sig { animation-name: pf-wave-b; }
+  @keyframes pf-wave-a {
+    0% { stroke-dashoffset: var(--o0); opacity: 0; }
+    10% { opacity: 1; }
+    88% { opacity: 1; }
+    100% { stroke-dashoffset: var(--o1); opacity: 0; }
+  }
+  @keyframes pf-wave-b {
+    0% { stroke-dashoffset: var(--o0); opacity: 0; }
+    10% { opacity: 1; }
+    88% { opacity: 1; }
+    100% { stroke-dashoffset: var(--o1); opacity: 0; }
+  }
+
+  /* Footer: a slow light traces the arches. Quieter: it sits on a dark card. */
+  .pf-arch .pf-sig { animation: pf-run-slow var(--T) linear infinite; animation-delay: calc(0s - var(--d)); }
+  .pf--tile .pf-sig { stroke: #fba8ee; }
+  .pf--tile .pf-tail { stroke-opacity: 0.12; stroke-width: 3px; }
+  .pf--tile .pf-head { stroke-opacity: 0.35; stroke-width: 2px; }
+  @keyframes pf-run-slow {
+    0% { stroke-dashoffset: var(--o0); opacity: 0; }
+    6% { opacity: 1; }
+    30% { opacity: 1; }
+    34%, 100% { stroke-dashoffset: var(--o1); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pf__signals { display: none; }
   }
 </style>

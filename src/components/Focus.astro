@@ -1,28 +1,24 @@
 ---
-// The nine focus areas as one continuous line of type, each word taking a
-// tone from the palette. The tone cycle is fixed (ink, mahogany, pink, coral,
-// ink, …) so the rhythm never changes between builds.
-//
-// Pink words on cream use --pink-text, not brand pink: brand pink is 2.54:1
-// on cream, below the 3:1 large-text floor (see theme.css).
+// The nine focus areas as one continuous line of type, all in the dark ink
+// colour. Only the slashes between them carry the pink. (The artboard tried
+// each word in a different palette colour; one colour reads calmer and every
+// word clears the contrast floor by a wide margin.)
 import { focusAreasShort } from '../data/work';
 
 const areas = focusAreasShort();
 const count = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][areas.length];
 
-// One tone per area, in the order the design sets them.
-const tones = ['ink', 'mahogany', 'pink', 'coral', 'ink', 'mahogany', 'coral', 'pink', 'ink'];
 ---
 
 <section class="focus pi-wrap">
-  <div class="focus__head pi-label">
+  <div class="focus__head pi-label" data-reveal>
     <span>Focus areas</span>
     <span><span class="focus__count">{count}</span>, in three groups</span>
   </div>
   <h2 class="focus__run">
     {areas.map((area, i) => (
       <>
-        <span class={`focus__area focus__area--${tones[i % tones.length]}`}>{area}</span>
+        <span class="focus__area" style={`--i:${i}`}>{area}</span>
         {/* Astro strips whitespace between adjacent elements, and with no
             space characters there is nowhere for the line to wrap. */}
         {i < areas.length - 1 && <>{' '}<span class="focus__sep" aria-hidden="true">/</span>{' '}</>}
@@ -54,11 +50,32 @@ const tones = ['ink', 'mahogany', 'pink', 'coral', 'ink', 'mahogany', 'coral', '
     letter-spacing: -0.035em;
     text-wrap: pretty;
   }
-  .focus__area { white-space: nowrap; }
-  .focus__area--ink { color: var(--ink); }
-  .focus__area--mahogany { color: var(--mahogany); }
-  .focus__area--pink { color: var(--pink-text); }
-  .focus__area--coral { color: var(--coral); }
+  .focus__area { white-space: nowrap; color: var(--ink); }
+
+  /* Scroll-driven: the line starts faint and each word firms up to full ink as
+     it rises through the viewport, in reading order (--i is the word's
+     position, so each starts a little after the one before it). It is tied to
+     the scroll itself — stop scrolling and it stops — rather than playing on a
+     timer, which is what makes it feel like reading down the page.
+     Progressive enhancement: where scroll-driven animation isn't supported,
+     none of this applies and the words are simply solid. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .focus__area {
+        display: inline-block; /* inline boxes can't be transformed */
+        /* Longhands on purpose — see the note in Highlights.astro. */
+        animation-name: focus-read;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry calc(8% + var(--i) * 3%) entry calc(68% + var(--i) * 3%);
+      }
+      @keyframes focus-read {
+        from { opacity: 0.14; transform: translate3d(0, 0.3em, 0); }
+        to { opacity: 1; transform: none; }
+      }
+    }
+  }
   .focus__sep { color: var(--pink); padding: 0 0.18em; }
 
   @media (max-width: 1279px) {
@@ -76,8 +93,7 @@ const tones = ['ink', 'mahogany', 'pink', 'coral', 'ink', 'mahogany', 'coral', '
       flex-wrap: wrap;
       gap: 4px 10px;
     }
-    /* the phone artboard sets every word in ink; only the slashes carry colour */
-    .focus__area { color: var(--ink); white-space: normal; }
+    .focus__area { white-space: normal; }
     .focus__sep { padding: 0; font-weight: 700; }
   }
 </style>

@@ -179,6 +179,47 @@ button { font: inherit; color: inherit; }
   .pi-btn { min-height: 52px; font-size: 17px; padding-block: 0; }
 }
 
+/* ---- motion: entrances ---------------------------------------------------
+   Two kinds, both short and both played once:
+
+   .pi-enter     for text in a hero, which arrives on page load. The delay is
+                 set per element (--enter-delay) so the card lands first and the
+                 words follow it in.
+   [data-reveal] for everything below the fold: hidden until it scrolls into
+                 view (reveal.ts adds .is-in), then rises and fades in.
+
+   Rules that keep these safe:
+   - Only ever on wrappers and static text, never on a button or link itself:
+     those already use `transform` and colour for hover, press and focus, and
+     an entrance animation on the same element would override them.
+   - Only transform and opacity.
+   - Nothing is hidden unless script is running (.js is set before first paint),
+     and a failsafe reveals everything after 2.5s in case the script never runs.
+   - prefers-reduced-motion: none of it. Content is simply there. */
+@media (prefers-reduced-motion: no-preference) {
+  .pi-enter {
+    animation: pi-enter 800ms var(--ease-out) var(--enter-delay, 850ms) both;
+  }
+  @keyframes pi-enter {
+    from { opacity: 0; transform: translate3d(0, 18px, 0); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .js [data-reveal]:not(.is-in) {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    animation: pi-reveal-failsafe 0.01s linear 2.5s forwards;
+  }
+  .js [data-reveal] {
+    transition:
+      opacity 650ms var(--ease-out) var(--reveal-delay, 0ms),
+      transform 650ms var(--ease-out) var(--reveal-delay, 0ms);
+  }
+  @keyframes pi-reveal-failsafe {
+    to { opacity: 1; transform: none; }
+  }
+}
+
 /* ---- reduced motion ---------------------------------------------------
    Colour changes stay (they aid comprehension); movement goes. */
 @media (prefers-reduced-motion: reduce) {

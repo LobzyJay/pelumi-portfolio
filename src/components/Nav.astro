@@ -24,7 +24,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
         <a class="pi-nav__link" href={l.href} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a>
       ))}
       <a class="pi-nav__cta" href={site.contact.resumePdf} target="_blank" rel="noopener">
-        <Icon name="document" tone="ink" size={16} />Résumé
+        <Icon name="document" size={16} />Résumé
       </a>
     </nav>
 
@@ -41,7 +41,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
 </div>
 
 <div class="pi-menu" id="pi-menu" data-menu hidden>
-  <PatternField variant="links" />
+  <PatternField variant="links" animate={false} />
   <div class="pi-menu__body">
     <nav class="pi-menu__links" aria-label="Menu">
       {links.map((l) => (
@@ -50,9 +50,9 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
       <a href={site.contact.resumePdf} target="_blank" rel="noopener">Résumé</a>
     </nav>
     <div class="pi-menu__actions">
-      <a class="pi-btn pi-btn--pink" href={mailHref}><Icon name="mail" tone="ink" />Email</a>
+      <a class="pi-btn pi-btn--pink" href={mailHref}><Icon name="mail" />Email</a>
       <a class="pi-btn pi-btn--outline" href={site.contact.linkedin} target="_blank" rel="noopener me">
-        LinkedIn<Icon name="arrow-up-right" tone="cream" />
+        LinkedIn<Icon name="arrow-up-right" />
       </a>
     </div>
   </div>
@@ -76,12 +76,28 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     height: var(--nav-h);
     padding: 0 10px 0 28px;
     border-radius: 999px;
-    background: rgba(43, 21, 23, 0.94);
     color: var(--cream);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 16px 40px rgba(43, 21, 23, 0.22);
+    box-shadow:
+      0 16px 40px rgba(43, 21, 23, 0.22),
+      /* a hairline of light along the top edge: the rim of the glass */
+      inset 0 1px 0 rgba(255, 247, 239, 0.14);
+
+    /* Solid where the browser can't blur, so text is always readable. */
+    background: rgba(43, 21, 23, 0.94);
+  }
+  /* Glass: a translucent ink over a blur of whatever scrolls beneath, pushed a
+     little more saturated so the pink and coral behind it stay lively instead
+     of going muddy. The ink is held at 72% so the cream text stays at 6.4:1
+     or better even over white (9:1 over the pink); 66% would dip to 5.2:1. */
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .pi-nav__pill {
+      background: rgba(43, 21, 23, 0.72);
+      -webkit-backdrop-filter: blur(8px) saturate(1.5);
+      backdrop-filter: blur(8px) saturate(1.5);
+    }
   }
   /* The brand gives way before the links do: a long name is truncated with
      an ellipsis rather than pushing the links out of the pill. */

@@ -15,11 +15,11 @@ import { site } from '../data/site';
   <HeroShell size="page" top={108} bottom={48}>
     <div class="nf">
       <span class="nf__k pi-label pi-label--12">Page not found</span>
-      <h1 class="nf__code">404</h1>
-      <div class="nf__foot">
+      <h1 class="nf__code pi-enter">404</h1>
+      <div class="nf__foot pi-enter" style="--enter-delay:1150ms">
         <p class="nf__line">{site.notFoundLine}</p>
         <div class="nf__actions">
-          <a class="pi-btn pi-btn--pink" href="/">Home<Icon name="arrow-right" tone="ink" /></a>
+          <a class="pi-btn pi-btn--pink" href="/">Home<Icon name="arrow-right" /></a>
           <a class="pi-btn pi-btn--outline" href="/work/">Work</a>
           <a class="pi-btn pi-btn--outline" href="/about/">About</a>
         </div>

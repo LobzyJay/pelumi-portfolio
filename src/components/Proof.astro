@@ -7,7 +7,7 @@ import { site } from '../data/site';
 <section class="proof pi-wrap">
   <div class="proof__ledger">
     {site.proof.map((item, i) => (
-      <div class="proof__item">
+      <div class="proof__item" data-reveal style={`--reveal-delay:${i * 90}ms`}>
         <div class="proof__head pi-label">
           <span class="proof__kind">{item.kind}</span>
           <span class="proof__n">{String(i + 1).padStart(2, '0')}</span>

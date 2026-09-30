@@ -2,14 +2,14 @@
 // Home: three featured documents as folded-corner cards on the coral folio
 // band, then a hand-off to the full list. The whole card is the link.
 //
-// States (from the interaction notes): rest; hover lifts 4px and slides the
-// arrow 4px right; active drops back to 0, scales .98 and darkens one step for
-// 120ms; focus is a 2px pink ring. The fold is a clip-path on an inner face,
-// not on the link itself — a clip-path on the link would also clip the
-// focus ring.
+// States: every card rests as cream. Hover (or keyboard focus) turns it
+// brown — the ink colour — and that is all: nothing lifts or slides. Pressing
+// scales it to .98 and goes one step darker for 120ms.
+// The fold is a clip-path on an inner face, not on the link itself — a
+// clip-path on the link would also clip the focus ring.
 import FolioBand from './FolioBand.astro';
 import Icon from './Icon.astro';
-import { cardGraphic, pad, type Doc } from '../data/work';
+import { cardGraphic, type Doc } from '../data/work';
 import options from '../assets/pattern/pi-options.svg?url';
 import intercept from '../assets/pattern/pi-intercept.svg?url';
 import plan from '../assets/pattern/pi-plan.svg?url';
@@ -30,7 +30,7 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
 <section class="hl" id={id}>
   <FolioBand>
     <div class="hl__inner">
-      <div class="hl__head">
+      <div class="hl__head" data-reveal>
         <h2 class="hl__title">Selected work</h2>
         <span class="hl__count pi-label pi-label--12">Three of {docs.length} · 2025–2026</span>
       </div>
@@ -38,29 +38,30 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
       <div class="hl__cards">
         {picked.map((doc) => {
           const d = doc.data;
-          const dark = d.label === 'real';
           return (
-            <a class:list={['card', { 'card--dark': dark }]} href={`/work/${doc.id}/`}>
+            <div class="card-wrap">
+            <a class="card" href={`/work/${doc.id}/`}>
               <span class="card__face">
                 <span class="card__art">
                   <img src={graphics[cardGraphic[doc.id]]} alt="" width="210" height="138" loading="lazy" />
                 </span>
-                <span class="card__meta pi-label">{pad(d.order)} · {d.format} · {d.dateLabel}</span>
+                <span class="card__meta pi-label">{d.format} · {d.dateLabel}</span>
                 <span class="card__question">{d.question}</span>
                 <span class="card__foot">
                   <span class="card__title">{d.title}</span>
                   <span class="card__chip">
-                    <span class="card__arrow"><Icon name="arrow-right" tone="ink" /></span>
+                    <span class="card__arrow"><Icon name="arrow-right" /></span>
                   </span>
                 </span>
               </span>
             </a>
+            </div>
           );
         })}
       </div>
 
-      <div class="hl__cta">
-        <a class="pi-btn pi-btn--ink" href="/work/">See all work<Icon name="arrow-right" tone="cream" /></a>
+      <div class="hl__cta" data-reveal>
+        <a class="pi-btn pi-btn--ink" href="/work/">See all work<Icon name="arrow-right" /></a>
       </div>
     </div>
   </FolioBand>
@@ -95,8 +96,10 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
   }
 
   /* ---- card ---- */
+  .card-wrap { min-width: 0; }
   .card {
     display: block;
+    height: 100%;
     color: var(--ink);
     transition: transform var(--dur) var(--ease);
   }
@@ -108,13 +111,14 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
     min-height: 340px;
     padding: 28px;
     background: var(--cream);
+    color: var(--ink);
     border-radius: 0 0 20px 20px;
     /* the folded top-right corner */
     clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);
-    transition: background-color var(--dur-press) var(--ease);
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
   }
-  .card--dark { color: var(--cream); }
-  .card--dark .card__face { background: var(--ink); }
 
   .card__art {
     /* content-box on purpose: the artboard is 170px of art plus 16px of
@@ -126,13 +130,11 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
     display: grid;
     place-items: center;
     padding: 16px;
+    transition: background-color var(--dur) var(--ease);
   }
-  .card--dark .card__art { background: rgba(255, 247, 239, 0.06); }
   .card__art img { height: 138px; width: auto; max-width: 100%; }
 
-  .card__meta { color: var(--rust); }
-  .card--dark .card__meta { color: var(--pink-soft); }
-
+  .card__meta { color: var(--rust); transition: color var(--dur) var(--ease); }
   .card__question {
     font-size: 27px;
     line-height: 1.15;
@@ -147,17 +149,16 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
     margin-top: auto;
     padding-top: 16px;
     border-top: 1.5px dashed var(--hair);
+    transition: border-color var(--dur) var(--ease);
   }
-  .card--dark .card__foot { border-top-color: var(--hair-pink); }
   .card__title {
     font-family: var(--font-body);
     font-size: 13px;
     font-weight: 500;
     line-height: 1.35;
     color: var(--plum);
+    transition: color var(--dur) var(--ease);
   }
-  .card--dark .card__title { color: var(--pink-soft); }
-
   .card__chip {
     flex-shrink: 0;
     width: 44px;
@@ -167,34 +168,85 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
     display: grid;
     place-items: center;
   }
-  .card__arrow { display: block; transition: transform var(--dur) var(--ease); }
+  .card__arrow { display: block; }
 
+  /* The brown state. A rule list rather than a class so hover (mouse) and
+     focus-visible (keyboard) can share it without hover ever sticking on a
+     touch screen. */
   @media (hover: hover) and (pointer: fine) {
-    .card:hover { transform: translateY(-4px); }
-    .card:hover .card__arrow { transform: translateX(4px); }
+    .card:hover .card__face { background: var(--ink); color: var(--cream); }
+    .card:hover .card__art { background: rgba(255, 247, 239, 0.06); }
+    .card:hover .card__meta,
+    .card:hover .card__title { color: var(--pink-soft); }
+    .card:hover .card__foot { border-top-color: var(--hair-pink); }
   }
-  .card:active { transform: translateY(0) scale(0.98); transition-duration: var(--dur-press); }
-  .card:active .card__face { background: var(--press-cream); }
-  .card--dark:active .card__face { background: var(--press-ink); }
+  .card:focus-visible .card__face { background: var(--ink); color: var(--cream); }
+  .card:focus-visible .card__art { background: rgba(255, 247, 239, 0.06); }
+  .card:focus-visible .card__meta,
+  .card:focus-visible .card__title { color: var(--pink-soft); }
+  .card:focus-visible .card__foot { border-top-color: var(--hair-pink); }
+
+  /* Active: drop back, shrink a touch, one step darker than whatever it is now. */
+  .card:active { transform: scale(0.98); transition-duration: var(--dur-press); }
+  .card:active .card__face { background: var(--press-cream); transition-duration: var(--dur-press); }
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover:active .card__face { background: var(--press-ink); }
+  }
 
   .hl__cta { display: flex; align-items: center; gap: 24px; margin-top: 40px; }
 
+  /* The artwork answers the mouse: a slow push-in while the card turns brown. */
+  .card__art img { transition: transform 900ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .card:hover .card__art img { transform: scale(1.06); }
+  }
+
+  /* Scroll-driven entrance: as the row scrolls into view the three cards fan
+     out from the middle of the row — the outer two start tucked behind the
+     centre card, small and faint — and grow to their places. Tied to the
+     scroll, not a timer. Applied to the wrapper (not the link) so the card's
+     own press state stays free to use `transform`. Where scroll-driven
+     animation isn't supported the cards just sit in place. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .card-wrap {
+        /* Longhands, not the `animation` shorthand: the build's CSS minifier
+           folds a separate animation-timeline into the shorthand, which
+           browsers then reject — silently dropping the whole animation. */
+        animation-name: card-in;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 78%;
+        transform-origin: 50% 62%;
+      }
+      /* The outer two start tucked behind the centre card, small and faint; the
+         centre card is the anchor, so it stays solid and only grows. */
+      .card-wrap:nth-child(1) { --from-x: 104%; --from-s: 0.68; --from-o: 0.15; }
+      .card-wrap:nth-child(2) { --from-x: 0%; --from-s: 0.86; --from-o: 1; position: relative; z-index: 1; }
+      .card-wrap:nth-child(3) { --from-x: -104%; --from-s: 0.68; --from-o: 0.15; }
+      @keyframes card-in {
+        from {
+          opacity: var(--from-o, 0.2);
+          transform: translate3d(var(--from-x, 0%), 56px, 0) scale(var(--from-s, 0.68));
+        }
+        to { opacity: 1; transform: none; }
+      }
+    }
+  }
+
   /* ---- tablet: 2-up ---- */
   @media (max-width: 1023px) {
+    /* no sideways fan when the cards aren't in one row: just grow in place */
+    .card-wrap:nth-child(n) { --from-x: 0%; --from-s: 0.9; --from-o: 0.35; }
     .hl__inner { padding: 40px var(--gutter); }
     .hl__head { display: block; padding-bottom: 8px; }
     .hl__title { font-size: 44px; letter-spacing: -0.04em; }
     .hl__count { display: none; }
     .hl__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
 
-    /* the phone/tablet artboards drop the dark card, the arrow chip and the
-       dashed foot: one cream card style, title as plain text */
-    .card--dark { color: var(--ink); }
-    .card--dark .card__face { background: var(--cream); }
-    .card--dark .card__art { background: var(--ink); }
-    .card--dark .card__meta { color: var(--rust); }
-    .card--dark .card__title { color: var(--plum); }
-    .card--dark:active .card__face { background: var(--press-cream); }
+    /* the phone/tablet artboards drop the arrow chip and the dashed foot:
+       the title becomes plain text under the question */
 
     .card__face {
       gap: 14px;
@@ -217,7 +269,7 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .card, .card__arrow { transition: none; }
-    .card:hover, .card:hover .card__arrow, .card:active { transform: none; }
+    .card { transition: none; }
+    .card:active { transform: none; }
   }
 </style>

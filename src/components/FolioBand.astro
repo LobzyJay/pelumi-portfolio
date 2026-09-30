@@ -21,7 +21,13 @@ const { radius = 0, class: extra = '' } = Astro.props;
 <style>
   .folio {
     position: relative;
+    /* `clip`, not `hidden`, where it is supported: both cut off what spills out
+       of the rounded corners, but `hidden` also turns the band into a scroll
+       container — and scroll-linked animations measure their progress against
+       the nearest one, so the cards inside would be watching a box that never
+       moves. (`hidden` stays as the fallback for browsers without `clip`.) */
     overflow: hidden;
+    overflow: clip;
     border-radius: var(--radius);
     background: var(--salmon);
   }

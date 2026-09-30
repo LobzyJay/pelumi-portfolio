@@ -18,14 +18,16 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   <HeroShell size="page" top={112} bottom={56}>
     <div class="intro">
       <div class="intro__top pi-label pi-label--12">
-        <span class="intro__kicker">About · Global policy analyst · {site.city}</span>
+        <span class="intro__kicker pi-enter">About · Global policy analyst · {site.city}</span>
         <span class="intro__kicker-m">About</span>
         <span class="intro__city">{site.city}</span>
       </div>
-      <Image class="intro__portrait" src={portrait} width={440} alt={site.name} loading="eager" />
+      <div class="intro__portrait pi-enter" style="--enter-delay:1000ms">
+        <Image class="intro__photo" src={portrait} width={440} alt={site.name} loading="eager" />
+      </div>
       <div class="intro__bottom">
-        <h1 class="intro__line">{site.shyLine}</h1>
-        <div class="intro__who">
+        <h1 class="intro__line pi-enter" style="--enter-delay:950ms">{site.shyLine}</h1>
+        <div class="intro__who pi-enter" style="--enter-delay:1200ms">
           <span>{site.legalName}</span>
           <span class="intro__degree">Master of Global Policy, UT Austin</span>
         </div>
@@ -34,9 +36,9 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   </HeroShell>
 
   <section class="about pi-wrap">
-    <h2 class="about__lead">{site.positioning}</h2>
+    <h2 class="about__lead" data-reveal>{site.positioning}</h2>
 
-    <div class="block">
+    <div class="block" data-reveal>
       <span class="pi-label pi-label--12 pi-eyebrow">01 Background</span>
       <p class="about__bio pi-body">{site.backgroundShort}</p>
       <p class="about__note pi-body">{site.backgroundNote}</p>
@@ -45,8 +47,8 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     <div class="block">
       <span class="pi-label pi-label--12 pi-eyebrow">02 Education &amp; experience</span>
       <ol class="timeline">
-        {timeline.map((t) => (
-          <li class="tl">
+        {timeline.map((t, i) => (
+          <li class="tl" data-reveal style={`--reveal-delay:${Math.min(i, 5) * 60}ms`}>
             <span class="tl__date pi-label">{t.dates}</span>
             <div class="tl__body">
               <h3 class="tl__title">{t.title}</h3>
@@ -60,7 +62,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
 
   <FolioBand class="places">
     <div class="places__inner">
-      <div class="card card--wide">
+      <div class="card card--wide" data-reveal>
         <span class="card__k pi-label pi-label--12">Places</span>
         <ul class="slashes">
           {site.places.map((p, i) => (
@@ -71,11 +73,11 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
           ))}
         </ul>
       </div>
-      <div class="card">
+      <div class="card" data-reveal style="--reveal-delay:90ms">
         <span class="card__k pi-label pi-label--12">Interests</span>
         <span class="card__v pi-body">{site.interests}</span>
       </div>
-      <div class="card">
+      <div class="card" data-reveal style="--reveal-delay:180ms">
         <span class="card__k pi-label pi-label--12">Off the clock</span>
         <span class="card__v pi-body">{site.offTheClock}</span>
       </div>
@@ -85,12 +87,16 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   <section class="frame pi-wrap">
     <span class="pi-label pi-label--12 pi-eyebrow">03 In frame</span>
     <div class="frame__grid">
-      <Image class="frame__a" src={graduation} width={1400} alt={`${site.firstName} at graduation, in front of the UT Austin tower`} />
-      <Image class="frame__b" src={studio} width={900} alt={`${site.firstName}, studio portrait, wider crop`} />
+      <figure class="frame__a" data-reveal>
+        <Image class="frame__img" src={graduation} width={1400} alt={`${site.firstName} at graduation, in front of the UT Austin tower`} />
+      </figure>
+      <figure class="frame__b" data-reveal style="--reveal-delay:120ms">
+        <Image class="frame__img" src={studio} width={900} alt={`${site.firstName}, studio portrait, wider crop`} />
+      </figure>
     </div>
-    <div class="frame__cta">
+    <div class="frame__cta" data-reveal>
       <span class="pi-label">Full CV, education and selected work</span>
-      <a class="pi-btn pi-btn--ink" href="/resume/">Résumé<Icon name="arrow-right" tone="cream" /></a>
+      <a class="pi-btn pi-btn--ink" href="/resume/">Résumé<Icon name="arrow-right" /></a>
     </div>
   </section>
 </Layout>
@@ -111,16 +117,24 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   }
   .intro__top { color: var(--pink); padding-right: 260px; }
   .intro__kicker-m, .intro__city { display: none; }
-  .intro :global(.intro__portrait) {
+  /* The ring and the clip belong to the frame; the photo inside it is free to
+     zoom on hover without ever growing past the ring. */
+  .intro__portrait {
     position: absolute;
     top: 48px;
     right: 56px;
     width: 220px;
     height: 220px;
     border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 6px var(--pink);
+  }
+  .intro__portrait :global(.intro__photo) {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: 50% 22%;
-    box-shadow: 0 0 0 6px var(--pink);
+    transition: transform 900ms var(--ease-out);
   }
   .intro__bottom { display: flex; flex-direction: column; gap: 28px; }
   .intro__line {
@@ -224,20 +238,26 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     row-gap: 24px;
     align-items: start;
   }
-  .frame :global(.frame__a) {
-    grid-column: span 7;
+  .frame__a, .frame__b {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    object-position: 50% 30%;
     border-radius: 20px;
+    overflow: hidden; /* the image zooms inside this frame on hover */
   }
-  .frame :global(.frame__b) {
-    grid-column: span 5;
+  .frame__a { grid-column: span 7; aspect-ratio: 4 / 3; }
+  .frame__b { grid-column: span 5; aspect-ratio: 4 / 5; }
+  .frame :global(.frame__img) {
     width: 100%;
-    aspect-ratio: 4 / 5;
+    height: 100%;
     object-fit: cover;
-    border-radius: 20px;
+    transition: transform 900ms var(--ease-out);
+  }
+  .frame__a :global(.frame__img) { object-position: 50% 30%; }
+  /* Pictures answer the mouse with a slow, small push-in. Fine pointers only
+     (a tap would leave it stuck), and never under reduced motion. */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .intro__portrait:hover :global(.intro__photo) { transform: scale(1.07); }
+    .frame__a:hover :global(.frame__img),
+    .frame__b:hover :global(.frame__img) { transform: scale(1.04); }
   }
   .frame__cta {
     margin-top: 64px;
@@ -256,7 +276,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     .intro__kicker { display: none; }
     .intro__kicker-m { display: inline; }
     .intro__city { display: inline; color: var(--pink-soft); }
-    .intro :global(.intro__portrait) {
+    .intro__portrait {
       position: static;
       align-self: center;
       width: 200px;
@@ -285,7 +305,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
 
     .frame { padding-block: 40px; display: flex; flex-direction: column; gap: 12px; }
     .frame__grid { display: flex; flex-direction: column; gap: 12px; }
-    .frame :global(.frame__a), .frame :global(.frame__b) { border-radius: 18px; }
+    .frame__a, .frame__b { border-radius: 18px; }
     .frame__cta { flex-direction: column; align-items: stretch; gap: 14px; margin-top: 20px; padding-top: 0; border-top: 0; }
     .frame__cta .pi-label { display: none; }
   }

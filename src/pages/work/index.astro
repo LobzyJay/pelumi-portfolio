@@ -17,14 +17,14 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
 >
   <HeroShell size="page" top={108} bottom={48}>
     <div class="wk">
-      <div class="wk__top pi-label">
+      <div class="wk__top pi-label pi-enter">
         <span>Selected writing</span>
         <span>{String(docs.length).padStart(2, '0')} pieces · 2025–26</span>
       </div>
 
-      <h1 class="wk__word">Work</h1>
+      <h1 class="wk__word pi-enter">Work</h1>
 
-      <div class="wk__side">
+      <div class="wk__side pi-enter" style="--enter-delay:1150ms">
         <p class="wk__lede pi-body">{lede}</p>
         <!-- desktop: themes live inside the card -->
         <ul class="wk__themes">
@@ -52,7 +52,9 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
 
   <section class="list pi-wrap" id="list">
     <div class="list__rows">
-      {docs.map((doc) => <WorkRow doc={doc} />)}
+      {docs.map((doc, i) => (
+        <div data-reveal style={`--reveal-delay:${Math.min(i, 5) * 60}ms`}><WorkRow doc={doc} /></div>
+      ))}
     </div>
   </section>
 </Layout>

@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" fill="none">
 <g stroke="#FFF7EF" stroke-opacity=".42" stroke-width="1.5"><path d="M0 60H240"></path><path d="M180 0V240"></path></g>
 <g stroke="#FFF7EF" stroke-opacity=".55" stroke-width="1.5" stroke-dasharray="3 6" stroke-linecap="round"><path d="M0 180C60 180 120 200 120 240"></path><path d="M120 0C120 60 200 180 240 180"></path></g>
-<circle cx="180" cy="60" r="9" stroke="#FFF7EF" stroke-opacity=".7" stroke-width="1.5"></circle><circle cx="180" cy="60" r="3.5" fill="#2B1517" fill-opacity=".55"></circle>
-<rect x="44" y="55" width="30" height="10" rx="5" fill="#2B1517" fill-opacity=".35"></rect>
-<circle cx="164" cy="146" r="3.5" fill="#FFF7EF" fill-opacity=".8"></circle>
+<circle cx="135.9" cy="60" r="3.5" fill="#FFF7EF" fill-opacity=".8"></circle><circle cx="180" cy="133.3" r="3.5" fill="#FFF7EF" fill-opacity=".8"></circle>
 </svg>

@@ -1,33 +1,50 @@
 ---
-// Inline icon. The set is drawn in two tones: a colour stroke plus a pink
-// accent, and the accent's dashed line is deep pink on light grounds but
-// soft pink on dark ones — so `tone` picks the matching file rather than
-// recolouring one.
+// Inline icon that follows its context.
+//
+// The icons are drawn in two tones: a main stroke plus pink accents. The main
+// stroke is `currentColor`, so it always matches the text beside it — and that
+// includes every interactive state: when a button flips from cream to ink on
+// hover, its icon flips with it, through the same transition, with nothing to
+// wire up. (Previously each icon was a fixed ink or cream file, so an outline
+// button that turned cream on hover kept a cream icon on a cream fill.)
+//
+// The one dashed accent line is derived from the same colour: pink mixed with
+// currentColor, so it reads as deep pink on a light ground and soft pink on a
+// dark one, and re-tints itself in every state. The pink fills are brand pink
+// and stay put.
 //
 // Inlined rather than <img> so it never costs a request per icon, and so
-// `aria-hidden` is applied here once: icons are always decorative (the
-// button or label next to them carries the meaning).
+// `aria-hidden` is applied here once: icons are always decorative (the button
+// or label next to them carries the meaning).
 interface Props {
   name: string;
-  /** 'ink' on light grounds, 'cream' on dark ones. */
-  tone?: 'ink' | 'cream';
   size?: 16 | 18 | 20;
   class?: string;
 }
-const { name, tone = 'ink', size = 20, class: extra = '' } = Astro.props;
+const { name, size = 20, class: extra = '' } = Astro.props;
 
-const icons = import.meta.glob<string>('../assets/icons/*.svg', {
+const icons = import.meta.glob<string>('../assets/icons/*-ink.svg', {
   query: '?raw',
   import: 'default',
   eager: true,
 });
-const raw = icons[`../assets/icons/${name}-${tone}.svg`];
-if (!raw) throw new Error(`Icon "${name}-${tone}" does not exist in src/assets/icons`);
+const raw = icons[`../assets/icons/${name}-ink.svg`];
+if (!raw) throw new Error(`Icon "${name}" does not exist in src/assets/icons`);
 
 const cls = ['pi-icon', size === 16 && 'pi-icon--16', size === 18 && 'pi-icon--18', extra]
   .filter(Boolean)
   .join(' ');
-const svg = raw.replace('<svg ', `<svg class="${cls}" aria-hidden="true" focusable="false" `);
+
+const svg = raw
+  // main stroke follows the text colour
+  .replaceAll('stroke="#2B1517"', 'stroke="currentColor"')
+  // dashed accent: derived from the current colour; the attribute is the
+  // fallback for browsers without color-mix()
+  .replaceAll(
+    'stroke="#A52A80"',
+    'stroke="#A52A80" style="stroke: color-mix(in srgb, var(--pink) 60%, currentColor)"',
+  )
+  .replace('<svg ', `<svg class="${cls}" aria-hidden="true" focusable="false" `);
 ---
 
 <Fragment set:html={svg} />

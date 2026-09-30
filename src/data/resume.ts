@@ -56,7 +56,7 @@ export const experience: Role[] = [
     bullets: [
       'Co-designed and delivered a workshop with IOM supporting migrant and trafficking-survivor reintegration.',
       'Wrote a policy proposal on school leadership, adopted by local administrators.',
-      'Worked with NGO staff and French-speaking communities on programme delivery.',
+      'Worked with NGO staff and French-speaking communities on program delivery.',
     ],
   },
   {

@@ -31,18 +31,20 @@ const chars = Math.max(...lines.map((l) => l.length));
         data-name-style={site.heroNameStyle}
         style={`--chars:${chars}`}
       >
-        {lines.map((line) => <span data-fit-line>{line}</span>)}
+        {lines.map((line, i) => (
+          <span data-fit-line class="pi-enter" style={`--enter-delay:${850 + i * 120}ms`}>{line}</span>
+        ))}
       </h1>
     </div>
 
     <div class="hero__bar pi-grid">
-      <p class="hero__pitch">{site.positioning}</p>
-      <div class="hero__aside">
+      <p class="hero__pitch pi-enter" style="--enter-delay:1250ms">{site.positioning}</p>
+      <div class="hero__aside pi-enter" style="--enter-delay:1400ms">
         <p class="hero__meta pi-label pi-label--12">
           {site.heroMeta[0]}<br />{site.heroMeta[1]}
         </p>
         <a class="pi-btn pi-btn--pink" href="#work">
-          Selected work<Icon name="arrow-right" tone="ink" />
+          Selected work<Icon name="arrow-right" />
         </a>
       </div>
     </div>

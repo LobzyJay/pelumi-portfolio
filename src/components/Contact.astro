@@ -13,24 +13,24 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
   <div class="pi-contact__card">
     <PatternField variant="tile" />
     <div class="pi-contact__content">
-      <p class="pi-contact__place pi-label pi-label--12">
-        <Icon name="pin" tone="cream" size={16} />{site.city}
+      <p class="pi-contact__place pi-label pi-label--12" data-reveal>
+        <Icon name="pin" size={16} />{site.city}
       </p>
 
       <div class="pi-contact__row">
-        <h2 class="pi-contact__title" id="contact-title">Recommendation: <br />get in touch.</h2>
-        <div class="pi-contact__actions">
-          <a class="pi-btn pi-btn--pink" href={mailHref}><Icon name="mail" tone="ink" />Email</a>
+        <h2 class="pi-contact__title" id="contact-title" data-reveal style="--reveal-delay:80ms">Recommendation: <br />get in touch.</h2>
+        <div class="pi-contact__actions" data-reveal style="--reveal-delay:200ms">
+          <a class="pi-btn pi-btn--pink" href={mailHref}><Icon name="mail" />Email</a>
           <a class="pi-btn pi-btn--outline" href={site.contact.linkedin} target="_blank" rel="noopener me">
-            LinkedIn<Icon name="arrow-up-right" tone="cream" />
+            LinkedIn<Icon name="arrow-up-right" />
           </a>
           <a class="pi-btn pi-btn--outline" href={site.contact.resumePdf} target="_blank" rel="noopener">
-            <Icon name="document" tone="cream" />Résumé
+            <Icon name="document" />Résumé
           </a>
         </div>
       </div>
 
-      <div class="pi-contact__foot pi-label pi-label--12">
+      <div class="pi-contact__foot pi-label pi-label--12" data-reveal style="--reveal-delay:320ms">
         <span>{site.legalName}</span>
         <span>{site.copyright}</span>
       </div>
@@ -39,8 +39,11 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
 </section>
 
 <style>
+  /* The same gap above the card as below it (and on phones too — the phone
+     layout had none above). */
   .pi-contact {
-    padding: 43px var(--gutter);
+    --gap-card: 43px;
+    padding: var(--gap-card) var(--gutter);
     max-width: calc(1600px + var(--gutter) * 2);
     margin-inline: auto;
   }
@@ -102,7 +105,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
   }
 
   @media (max-width: 1023px) {
-    .pi-contact { padding: 0 var(--gutter) 16px; }
+    .pi-contact { --gap-card: 16px; }
     .pi-contact__card { border-radius: 28px; padding: 36px 24px 24px; }
     .pi-contact__card > .pi-contact__content {
       display: flex;

@@ -23,6 +23,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- Runs before first paint: lets CSS know script is available, so the hero
+         lines can wait to be drawn instead of flashing on. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} — {site.name}</title>
     <meta name="description" content={description} />
@@ -42,5 +45,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       <slot />
       {contact && <Contact />}
     </main>
+    <script>
+      import { initPatterns } from '../scripts/pattern-motion';
+      import { initReveal } from '../scripts/reveal';
+      initPatterns();
+      initReveal();
+    </script>
   </body>
 </html>
