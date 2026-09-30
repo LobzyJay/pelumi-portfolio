@@ -5,18 +5,17 @@ import Hero from '../components/Hero.astro';
 import Proof from '../components/Proof.astro';
 import Focus from '../components/Focus.astro';
 import Highlights from '../components/Highlights.astro';
-import Field from '../components/Field.astro';
+import { site } from '../data/site';
 
 const docs = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Layout
-  title="The Signal"
-  description="Alternative homepage direction — Pelumi Igbalajobi, global policy analyst."
+  title={site.positioning.replace(/\.$/, '')}
+  description={`${site.name} is a global policy analyst in Washington, D.C., working on technology, human security and the institutions that govern both. Selected policy memos, research and field work.`}
 >
   <Hero />
   <Proof />
   <Focus />
   <Highlights docs={docs} id="work" />
-  <Field />
 </Layout>

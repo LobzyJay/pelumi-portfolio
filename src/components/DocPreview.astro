@@ -1,61 +1,87 @@
 ---
-// First-page render + download, or the honest "pending" state for the one
-// document whose source file is withheld (doc 06 — see its MDX frontmatter).
+// First-page render + a link to the PDF, or the honest "pending" state for the
+// one document whose source file is withheld (doc 06 — see its frontmatter).
+// The PDF opens in a new tab, per the interaction notes.
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import type { Doc } from '../data/work';
 
-interface Props { doc: CollectionEntry<'work'> }
+interface Props { doc: Doc }
 const { doc } = Astro.props;
 const d = doc.data;
 
-// The glob keys are the literal specifier strings, so this lookup path has
-// to stay character-identical to the glob above.
+// The glob keys are the literal specifier strings, so this lookup path has to
+// stay character-identical to the glob below.
 const images = import.meta.glob<{ default: ImageMetadata }>('../assets/documents/*.png', { eager: true });
 const preview = d.previewImage ? images[`../assets/documents/${d.previewImage}.png`]?.default : undefined;
 ---
 
-<section class="sg-doc grid-12">
-  <div class="sg-doc__figure col-span-4">
+<section class="doc">
+  <div class="doc__figure">
     {preview ? (
       <Image src={preview} alt={`First page of ${d.title}`} width={520} height={673} />
     ) : (
-      <div class="sg-doc__pending"><span class="sg-mono">PDF pending</span></div>
+      <div class="doc__pending"><span class="pi-label">PDF pending</span></div>
     )}
   </div>
 
-  <div class="sg-doc__meta col-span-8">
-    <span class="sg-mono--12 sg-mono">Document</span>
+  <div class="doc__meta">
+    <span class="pi-label pi-label--12">Document</span>
     {d.pdf ? (
-      <a href={d.pdf} download class="sg-pill sg-pill--ink sg-doc__cta">Read the full PDF ↓</a>
+      <a class="pi-btn pi-btn--ink" href={d.pdf} target="_blank" rel="noopener">
+        Read the full PDF<Icon name="arrow-down" tone="cream" />
+      </a>
     ) : (
-      <p class="sg-body sg-doc__note">
+      <p class="doc__note pi-body">
         Not yet published — the source presentation and permission to publish it are still outstanding.
         See the note in the context above.
       </p>
     )}
     {d.pages && d.words && (
-      <p class="sg-mono sg-doc__stats">{d.pages} pages · {d.words.toLocaleString()} words</p>
+      <p class="doc__stats pi-label">{d.pages} pages · {d.words.toLocaleString('en-US')} words</p>
     )}
   </div>
 </section>
 
 <style>
-  .sg-doc { align-items: start; margin-top: var(--sg-band); }
-  .sg-doc__figure :global(img) {
-    width: 100%;
-    border: 1px solid var(--sg-ink);
+  .doc {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
   }
-  .sg-doc__pending {
-    width: 100%;
+  .doc__figure { grid-column: span 4; }
+  .doc__figure :global(img) { width: 100%; border-radius: 20px; }
+  .doc__pending {
     aspect-ratio: 4 / 5.18;
-    border: 1px dashed var(--sg-ink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 1.5px dashed var(--hair-strong);
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
     opacity: 0.7;
   }
-  .sg-doc__meta { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
-  .sg-doc__cta { align-self: flex-start; }
-  .sg-doc__note { font-size: 17px; max-width: 46ch; }
-  .sg-doc__stats { opacity: 0.7; }
+  .doc__meta {
+    grid-column: span 8;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .doc__note { font-size: 17px; line-height: 1.5; max-width: 46ch; }
+  .doc__stats { opacity: 0.7; }
+
+  @media (max-width: 1023px) {
+    .doc { display: flex; flex-direction: column; gap: 12px; }
+    .doc__figure {
+      background: var(--ink);
+      border-radius: 18px;
+      padding: 20px;
+    }
+    .doc__figure :global(img) { border-radius: 6px; }
+    .doc__pending { border-color: rgba(255, 247, 239, 0.4); color: var(--cream); border-radius: 6px; }
+    .doc__meta { align-items: stretch; gap: 12px; }
+    .doc__meta > .pi-label--12 { display: none; }
+    .doc__meta .pi-btn { width: 100%; }
+    .doc__stats { text-align: center; color: var(--plum); opacity: 1; }
+  }
 </style>

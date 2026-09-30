@@ -1,0 +1,33 @@
+---
+// Inline icon. The set is drawn in two tones: a colour stroke plus a pink
+// accent, and the accent's dashed line is deep pink on light grounds but
+// soft pink on dark ones — so `tone` picks the matching file rather than
+// recolouring one.
+//
+// Inlined rather than <img> so it never costs a request per icon, and so
+// `aria-hidden` is applied here once: icons are always decorative (the
+// button or label next to them carries the meaning).
+interface Props {
+  name: string;
+  /** 'ink' on light grounds, 'cream' on dark ones. */
+  tone?: 'ink' | 'cream';
+  size?: 16 | 18 | 20;
+  class?: string;
+}
+const { name, tone = 'ink', size = 20, class: extra = '' } = Astro.props;
+
+const icons = import.meta.glob<string>('../assets/icons/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const raw = icons[`../assets/icons/${name}-${tone}.svg`];
+if (!raw) throw new Error(`Icon "${name}-${tone}" does not exist in src/assets/icons`);
+
+const cls = ['pi-icon', size === 16 && 'pi-icon--16', size === 18 && 'pi-icon--18', extra]
+  .filter(Boolean)
+  .join(' ');
+const svg = raw.replace('<svg ', `<svg class="${cls}" aria-hidden="true" focusable="false" `);
+---
+
+<Fragment set:html={svg} />

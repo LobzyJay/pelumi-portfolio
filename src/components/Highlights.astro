@@ -1,167 +1,223 @@
 ---
-// Homepage highlights. The full six live on /work — repeating them
-// here made the homepage a duplicate index, so this shows three as cards
-// built around each document's framing question (the most quotable thing in
-// the material, and already written as one sentence), then hands off to the
-// index.
+// Home: three featured documents as folded-corner cards on the coral folio
+// band, then a hand-off to the full list. The whole card is the link.
 //
-// Cards are rounded; the ruled rows on /work are not. That's the
-// rule: lists are ruled, highlights are carded.
-import type { CollectionEntry } from 'astro:content';
+// States (from the interaction notes): rest; hover lifts 4px and slides the
+// arrow 4px right; active drops back to 0, scales .98 and darkens one step for
+// 120ms; focus is a 2px pink ring. The fold is a clip-path on an inner face,
+// not on the link itself — a clip-path on the link would also clip the
+// focus ring.
+import FolioBand from './FolioBand.astro';
+import Icon from './Icon.astro';
+import { cardGraphic, pad, type Doc } from '../data/work';
+import options from '../assets/pattern/pi-options.svg?url';
+import intercept from '../assets/pattern/pi-intercept.svg?url';
+import plan from '../assets/pattern/pi-plan.svg?url';
 
 interface Props {
-  docs: CollectionEntry<'work'>[];
+  docs: Doc[];
   id?: string;
 }
 const { docs, id } = Astro.props;
 
-// Featured order from content-model.md: 01 · 02 · 06 — the sharpest memo,
-// the signature theme, and the one real-world deliverable.
-//
-// One row of three identical cards: equal spans, equal height. The three
-// documents are peers, so the grid says so.
+const graphics = { 'pi-options': options, 'pi-intercept': intercept, 'pi-plan': plan };
+// Featured order from the content model: the sharpest memo, the signature
+// theme, and the one real-world deliverable.
 const FEATURED = ['autonomous-targeting', 'cyber-enabled-trafficking', 'shared-hope-field-report'];
-const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug))
-  .filter((doc): doc is CollectionEntry<'work'> => Boolean(doc));
-const total = docs.length;
+const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d): d is Doc => Boolean(d));
 ---
 
-<section class="sg-hl sg-band sg-band--bone" id={id}>
-  <div class="sg-hl__head">
-    <h2 class="sg-hl__heading">Selected work</h2>
-    <span class="sg-mono--12 sg-mono">Three of {total} · 2025–2026</span>
-  </div>
+<section class="hl" id={id}>
+  <FolioBand>
+    <div class="hl__inner">
+      <div class="hl__head">
+        <h2 class="hl__title">Selected work</h2>
+        <span class="hl__count pi-label pi-label--12">Three of {docs.length} · 2025–2026</span>
+      </div>
 
-  <div class="sg-hl__cards grid-12">
-    {picked.map((doc) => {
-      const d = doc.data;
-      const isReal = d.label === 'real';
-      return (
-        <a
-          href={`/work/${doc.id}/`}
-          class="sg-hl__card col-span-4"
-          class:list={[{ 'sg-hl__card--accent': isReal }]}
-        >
-          <span class="sg-mono sg-hl__meta">
-            {String(d.order).padStart(2, '0')} · {d.format} · {d.dateLabel}
-          </span>
-          <p class="sg-title sg-hl__question">{d.question}</p>
-          <span class="sg-hl__foot">
-            <span class="sg-hl__title">{d.title}</span>
-            <span class="sg-hl__arrow" aria-hidden="true">→</span>
-          </span>
-        </a>
-      );
-    })}
-  </div>
+      <div class="hl__cards">
+        {picked.map((doc) => {
+          const d = doc.data;
+          const dark = d.label === 'real';
+          return (
+            <a class:list={['card', { 'card--dark': dark }]} href={`/work/${doc.id}/`}>
+              <span class="card__face">
+                <span class="card__art">
+                  <img src={graphics[cardGraphic[doc.id]]} alt="" width="210" height="138" loading="lazy" />
+                </span>
+                <span class="card__meta pi-label">{pad(d.order)} · {d.format} · {d.dateLabel}</span>
+                <span class="card__question">{d.question}</span>
+                <span class="card__foot">
+                  <span class="card__title">{d.title}</span>
+                  <span class="card__chip">
+                    <span class="card__arrow"><Icon name="arrow-right" tone="ink" /></span>
+                  </span>
+                </span>
+              </span>
+            </a>
+          );
+        })}
+      </div>
 
-  <div class="sg-hl__cta">
-    <a href="/work/" class="sg-pill sg-pill--ink sg-pill--lg">See all work →</a>
-    <span class="sg-mono sg-hl__cta-note">Filterable by focus area, format and year</span>
-  </div>
+      <div class="hl__cta">
+        <a class="pi-btn pi-btn--ink" href="/work/">See all work<Icon name="arrow-right" tone="cream" /></a>
+      </div>
+    </div>
+  </FolioBand>
 </section>
 
 <style>
-  .sg-hl__head {
+  .hl__inner {
+    max-width: calc(1600px + var(--gutter) * 2);
+    margin-inline: auto;
+    padding: 64px var(--gutter);
+  }
+  .hl__head {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: 16px;
-    flex-wrap: wrap;
-    padding-bottom: 20px;
-    border-bottom: 4px solid var(--sg-ink);
   }
-  .sg-hl__heading {
-    font-size: 24px;
-    font-weight: 800;
-    font-stretch: 100%;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+  .hl__title {
+    font-size: 56px;
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: #fff;
+  }
+  .hl__count { color: #fff; }
+
+  .hl__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap);
+    margin-top: 40px;
   }
 
-  .sg-hl__cards { row-gap: var(--space-md); margin-top: var(--space-lg); }
-
-  .sg-hl__card {
+  /* ---- card ---- */
+  .card {
+    display: block;
+    color: var(--ink);
+    transition: transform var(--dur) var(--ease);
+  }
+  .card__face {
     display: flex;
     flex-direction: column;
     gap: 18px;
-    border: 1px solid var(--sg-ink);
-    border-radius: 20px;
-    padding: 28px;
+    height: 100%;
     min-height: 340px;
+    padding: 28px;
+    background: var(--cream);
+    border-radius: 0 0 20px 20px;
+    /* the folded top-right corner */
+    clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);
+    transition: background-color var(--dur-press) var(--ease);
   }
-  .sg-hl__card:hover { text-decoration: none; }
-  .sg-hl__card:hover .sg-hl__title { text-decoration: underline; text-underline-offset: 4px; }
+  .card--dark { color: var(--cream); }
+  .card--dark .card__face { background: var(--ink); }
 
-  :global(.signal) .sg-hl__card--accent {
-    background: var(--sg-orange);
-    border-color: var(--sg-orange);
-    color: var(--sg-bone);
+  .card__art {
+    /* content-box on purpose: the artboard is 170px of art plus 16px of
+       padding either side, i.e. 202px tall */
+    box-sizing: content-box;
+    height: 170px;
+    border-radius: 14px;
+    background: var(--ink);
+    display: grid;
+    place-items: center;
+    padding: 16px;
   }
+  .card--dark .card__art { background: rgba(255, 247, 239, 0.06); }
+  .card__art img { height: 138px; width: auto; max-width: 100%; }
 
-  /* Hover fills the card. The inner hairline uses currentColor, so it turns
-     with everything else. Colour only — nothing moves. */
-  .sg-hl__card {
-    transition: background-color 160ms linear, border-color 160ms linear, color 160ms linear;
-  }
-  :global(.signal) .sg-hl__card:hover,
-  :global(.signal) .sg-hl__card:focus-visible {
-    background: var(--sg-orange);
-    border-color: var(--sg-orange);
-    color: var(--sg-bone);
-  }
-  /* The accent card is already orange, so it inverts to ink instead. */
-  :global(.signal) .sg-hl__card--accent:hover,
-  :global(.signal) .sg-hl__card--accent:focus-visible {
-    background: var(--sg-ink);
-    border-color: var(--sg-ink);
-    color: var(--sg-bone);
-  }
+  .card__meta { color: var(--rust); }
+  .card--dark .card__meta { color: var(--pink-soft); }
 
-  @media (prefers-reduced-motion: reduce) {
-    .sg-hl__card { transition: none; }
-  }
-
-  .sg-hl__meta { opacity: 0.65; }
-  .sg-hl__question {
-    font-size: clamp(20px, 1.9vw, 27px);
+  .card__question {
+    font-size: 27px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
     text-wrap: pretty;
   }
-  .sg-hl__foot {
+  .card__foot {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 16px;
     margin-top: auto;
     padding-top: 16px;
-    border-top: 1px solid currentColor;
+    border-top: 1.5px dashed var(--hair);
   }
-  .sg-hl__title {
+  .card--dark .card__foot { border-top-color: var(--hair-pink); }
+  .card__title {
+    font-family: var(--font-body);
     font-size: 13px;
-    font-weight: 600;
-    font-stretch: 100%;
-    line-height: 1.3;
-    opacity: 0.8;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--plum);
   }
-  .sg-hl__arrow { font-size: 18px; flex: none; }
+  .card--dark .card__title { color: var(--pink-soft); }
 
-  .sg-hl__cta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-    margin-top: var(--space-lg);
+  .card__chip {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: var(--pink);
+    display: grid;
+    place-items: center;
   }
-  .sg-hl__cta-note { opacity: 0.6; }
+  .card__arrow { display: block; transition: transform var(--dur) var(--ease); }
 
-  /* Tablet keeps the single row, but 3/5/4 would put the narrow card at
-     ~170px — too tight for a question. Even spans hold the row together
-     until the grid stacks at 640. */
-  @media (max-width: 1024px) {
-    .sg-hl__card { padding: 22px; }
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover { transform: translateY(-4px); }
+    .card:hover .card__arrow { transform: translateX(4px); }
+  }
+  .card:active { transform: translateY(0) scale(0.98); transition-duration: var(--dur-press); }
+  .card:active .card__face { background: var(--press-cream); }
+  .card--dark:active .card__face { background: var(--press-ink); }
+
+  .hl__cta { display: flex; align-items: center; gap: 24px; margin-top: 40px; }
+
+  /* ---- tablet: 2-up ---- */
+  @media (max-width: 1023px) {
+    .hl__inner { padding: 40px var(--gutter); }
+    .hl__head { display: block; padding-bottom: 8px; }
+    .hl__title { font-size: 44px; letter-spacing: -0.04em; }
+    .hl__count { display: none; }
+    .hl__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+
+    /* the phone/tablet artboards drop the dark card, the arrow chip and the
+       dashed foot: one cream card style, title as plain text */
+    .card--dark { color: var(--ink); }
+    .card--dark .card__face { background: var(--cream); }
+    .card--dark .card__art { background: var(--ink); }
+    .card--dark .card__meta { color: var(--rust); }
+    .card--dark .card__title { color: var(--plum); }
+    .card--dark:active .card__face { background: var(--press-cream); }
+
+    .card__face {
+      gap: 14px;
+      min-height: 0;
+      padding: 20px;
+      border-radius: 0 0 18px 18px;
+      clip-path: polygon(0 0, calc(100% - 36px) 0, 100% 36px, 100% 100%, 0 100%);
+    }
+    .card__art { height: 150px; border-radius: 12px; padding: 14px; }  /* content-box: 178px tall */
+    .card__art img { height: 120px; }
+    .card__question { font-size: 23px; }
+    .card__foot { display: block; padding: 0; border: 0; margin: 0; }
+    .card__title { font-size: 14px; font-weight: 400; line-height: 1.45; }
+    .card__chip { display: none; }
+    .hl__cta { margin-top: 12px; }
+    .hl__cta .pi-btn { width: 100%; }
+  }
+  @media (max-width: 599px) {
+    .hl__cards { grid-template-columns: 1fr; }
   }
 
-  @media (max-width: 640px) {
-    .sg-hl__card { min-height: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .card__arrow { transition: none; }
+    .card:hover, .card:hover .card__arrow, .card:active { transform: none; }
   }
 </style>

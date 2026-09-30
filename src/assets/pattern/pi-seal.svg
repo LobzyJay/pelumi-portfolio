@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+<defs>
+<linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBA8EE"></stop><stop offset="1" stop-color="#F46BC8"></stop></linearGradient>
+<linearGradient id="b" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F46BC8"></stop><stop offset="1" stop-color="#E9603F"></stop></linearGradient>
+<linearGradient id="c" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#E9603F"></stop><stop offset="1" stop-color="#F2837F"></stop></linearGradient>
+</defs>
+<circle cx="200" cy="200" r="186" stroke="#FFF7EF" stroke-opacity=".35" stroke-width="10" stroke-dasharray="1.5 10.67"></circle>
+<circle cx="200" cy="200" r="196" stroke="#FFF7EF" stroke-opacity=".2" stroke-width="1.5"></circle>
+<g stroke-width="48"><circle cx="200" cy="200" r="150" stroke="url(#a)" stroke-dasharray="282.7 659.8" transform="rotate(-84 200 200)"></circle><circle cx="200" cy="200" r="150" stroke="url(#b)" stroke-dasharray="282.7 659.8" transform="rotate(36 200 200)"></circle><circle cx="200" cy="200" r="150" stroke="url(#c)" stroke-dasharray="282.7 659.8" transform="rotate(156 200 200)"></circle></g>
+<circle cx="200" cy="200" r="100" stroke="#FBA8EE" stroke-width="1.5" stroke-dasharray="4 6"></circle>
+<path d="M200 120V280M120 200H280" stroke="#FFF7EF" stroke-opacity=".3" stroke-width="1.5"></path>
+<circle cx="200" cy="200" r="30" fill="#F46BC8"></circle><circle cx="200" cy="200" r="46" stroke="#FFF7EF" stroke-width="2"></circle>
+</svg>

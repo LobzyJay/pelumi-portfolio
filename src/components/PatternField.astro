@@ -1,0 +1,69 @@
+---
+// The pattern that sits behind every hero and the contact card.
+//
+// It is a separate layer (not a CSS background on the hero) so it can move
+// on its own while the text stays still. Structure:
+//
+//   .pf                 clips to the section it lives in
+//   └ .pf__pan          oversized by one tile on every side, so a pan of up to
+//                       one tile never exposes an edge
+//      └ .pf__lines     the static line tile — the look in the artboards
+//
+// Static here; motion is layered onto this same structure.
+interface Props {
+  /** 'links' = hero lines (240px tile); 'tile' = the contact card's arches. */
+  variant?: 'links' | 'tile';
+}
+const { variant = 'links' } = Astro.props;
+---
+
+<div class:list={['pf', `pf--${variant}`]} aria-hidden="true" data-pf>
+  <div class="pf__pan" data-pf-pan>
+    <div class="pf__lines"></div>
+  </div>
+</div>
+
+<style>
+  .pf {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    /* keep the pattern behind the content layer that follows it */
+    z-index: 0;
+  }
+
+  .pf__pan {
+    position: absolute;
+    /* one tile of bleed per side; --tile-x/-y are set per variant below */
+    inset: calc(var(--tile-y) * -1) calc(var(--tile-x) * -1);
+  }
+  .pf__lines {
+    position: absolute;
+    inset: 0;
+    background-repeat: repeat;
+  }
+
+  /* hero lines */
+  .pf--links { --tile-x: 240px; --tile-y: 240px; }
+  .pf--links .pf__lines {
+    background-image: url('../assets/pattern/pi-links.svg');
+    background-size: var(--tile-x) var(--tile-y);
+  }
+  /* Mobile uses the cream-only tile at half size (no ink pills or dots),
+     centred, exactly as the 390 artboards draw it. */
+  @media (max-width: 1023px) {
+    .pf--links { --tile-x: 120px; --tile-y: 120px; }
+    .pf--links .pf__lines {
+      background-image: url('../assets/pattern/pi-links-mobile.svg');
+      background-position: center top;
+    }
+  }
+
+  /* contact card arches */
+  .pf--tile { --tile-x: 200px; --tile-y: 240px; }
+  .pf--tile .pf__lines {
+    background-image: url('../assets/pattern/pi-tile.svg');
+    background-size: var(--tile-x) var(--tile-y);
+  }
+</style>

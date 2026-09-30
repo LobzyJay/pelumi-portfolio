@@ -1,115 +1,145 @@
 ---
-// Ink hero. The name is one size across both lines, centred, sized so the
-// longer line fills the column — and the portrait sits on top of it as a
-// small tilted card at the seam between the lines. That overlap is the
-// signature move of this direction: the person interrupting the type.
-import { Image } from 'astro:assets';
-import portrait from '../assets/photos/hero-portrait.jpg';
+// Home hero. The name is set as one size across both lines — the size at
+// which the longest line fills the card — centred on desktop, left on phones.
+//
+// Two styles, chosen by `site.heroNameStyle` (and previewable with
+// ?nameStyle=caps|regular):
+//   regular  mixed case, regular weight — the artboard
+//   caps     condensed, black weight, all caps — the heavy version
+// Both are fitted by src/scripts/fit.ts, so any name length or style fits
+// without touching the layout.
+import HeroShell from './HeroShell.astro';
+import Icon from './Icon.astro';
 import { site } from '../data/site';
 
-const [first, ...rest] = site.name.split(' ');
-const last = rest.join(' ');
+// Two lines: the first name, then everything after it. A one-word name
+// simply gets one line.
+const lines = [site.firstName, site.lastName].filter(Boolean);
+// Longest line, in characters. Feeds the pre-fit size estimate in the CSS, so
+// the name already fits before (or without) JavaScript.
+const chars = Math.max(...lines.map((l) => l.length));
 ---
 
-<header class="sg-hero sg-band--ink">
-  <div class="sg-hero__name-wrap">
-    <div class="sg-hero__name sg-display" data-fit-container data-fit-ref="200">
-      <span data-fit-line>{first}</span>
-      <span data-fit-line>{last}</span>
+<HeroShell size="home" top={108} bottom={64}>
+  <div class="hero">
+    <div class="hero__stage">
+      <h1
+        class="hero__name"
+        data-fit-container
+        data-fit-ref="200"
+        data-fit-max="26"
+        data-name-style={site.heroNameStyle}
+        style={`--chars:${chars}`}
+      >
+        {lines.map((line) => <span data-fit-line>{line}</span>)}
+      </h1>
     </div>
-    <figure class="sg-hero__portrait">
-      <Image src={portrait} alt={site.name} width={340} height={400} />
-    </figure>
-  </div>
 
-  <div class="sg-hero__bar grid-12">
-    <p class="sg-title sg-hero__positioning col-span-7">{site.positioning}</p>
-    <div class="sg-hero__aside col-span-5">
-      <p class="sg-mono sg-hero__meta">
-        {site.degree.program === 'Master of Global Policy Studies' ? 'MGPS' : site.degree.program}, LBJ School of Public Affairs<br />
-        Washington, D.C.
-      </p>
-      <a href="#work" class="sg-pill sg-pill--accent sg-hero__cta">Selected work →</a>
+    <div class="hero__bar pi-grid">
+      <p class="hero__pitch">{site.positioning}</p>
+      <div class="hero__aside">
+        <p class="hero__meta pi-label pi-label--12">
+          {site.heroMeta[0]}<br />{site.heroMeta[1]}
+        </p>
+        <a class="pi-btn pi-btn--pink" href="#work">
+          Selected work<Icon name="arrow-right" tone="ink" />
+        </a>
+      </div>
     </div>
   </div>
-</header>
+</HeroShell>
 
 <style>
-  /* The hero always fills the first screen, whatever the content does to its
-     height — so the ink runs to the fold and never leaves a strip of bone
-     under it. 100dvh (not vh) so mobile browser chrome collapsing doesn't
-     jump the layout. The nav sits above, hence subtracting its height. */
-  .sg-hero {
-    background: var(--sg-ink);
-    color: var(--sg-bone);
-    padding: clamp(40px, 6vw, 84px) var(--gutter) var(--sg-band);
-    min-height: calc(100dvh - var(--sg-nav-h));
-    box-sizing: border-box;
+  .hero {
+    flex: 1;
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 32px;
+    padding: 56px 56px 48px;
     display: flex;
     flex-direction: column;
   }
-
-  /* The name takes the slack and stays optically centred; the bar holds the
-     floor. Between them the hero absorbs any viewport height. */
-  .sg-hero__name-wrap {
-    position: relative;
+  .hero__stage {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
-  .sg-hero__name {
+  .hero__name {
+    /* container-type lets fit.ts hand the fit to CSS as a `cqw` value */
     container-type: inline-size;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: -0.045em;
+    /* average glyph width as a share of the font size, per style. Deliberately
+       a little wide: the estimate only has to be safe, never exact. */
+    --k: 0.5;
   }
-  .sg-hero__name [data-fit-line] {
+  .hero__name[data-name-style='caps'] {
+    text-transform: uppercase;
+    font-weight: 900;
+    font-stretch: 68%;
+    line-height: 0.82;
+    letter-spacing: -0.02em;
+    --k: 0.56;
+  }
+  /* Before fit.ts has measured (or with JavaScript off) the name is sized from
+     its character count, which can only under-fill the card, never overflow. */
+  .hero__name [data-fit-line] {
     white-space: nowrap;
-    font-size: 200px;
+    /* same ceiling as data-fit-max, so the estimate respects it too */
+    font-size: min(26cqw, calc(100cqw / (var(--chars) * var(--k))));
   }
 
-  /* The overlap. Anchored to the seam between the two lines and nudged off
-     centre so it breaks a letter rather than sitting symmetrically. */
-  .sg-hero__portrait {
-    position: absolute;
-    left: 47%;
-    top: 50%;
-    transform: translate(-50%, -50%) rotate(4deg);
-    width: clamp(88px, 8.5vw, 122px);
-    background: var(--sg-bone);
-    padding: 6px;
-  }
-  .sg-hero__portrait :global(img) {
-    width: 100%;
-    aspect-ratio: 4 / 4.6;
-    object-fit: cover;
-    object-position: 50% 12%;
-  }
-
-  .sg-hero__bar {
-    margin-top: clamp(32px, 4vw, 56px);
+  .hero__bar {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1.5px dashed rgba(251, 168, 238, 0.5);
     align-items: end;
   }
-  .sg-hero__positioning { font-size: clamp(22px, 2.3vw, 32px); max-width: 22ch; }
-  .sg-hero__aside {
+  .hero__pitch {
+    grid-column: span 7;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    max-width: 26ch;
+  }
+  .hero__aside {
+    grid-column: span 5;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 20px;
     text-align: right;
   }
-  .sg-hero__meta { opacity: 0.75; }
+  .hero__meta { color: var(--pink-soft); }
 
-  @media (max-width: 640px) {
-    .sg-hero__portrait { width: 72px; left: 50%; }
-    .sg-hero__bar { row-gap: 24px; }
-    .sg-hero__aside { align-items: flex-start; text-align: left; }
+  @media (max-width: 1023px) {
+    .hero { border-radius: 24px; padding: 36px 24px 24px; gap: 28px; }
+    .hero__stage { justify-content: flex-start; flex: none; }
+    .hero__name { align-items: flex-start; text-align: left; }
+    .hero__name:not([data-name-style='caps']) { letter-spacing: -0.05em; }
+    .hero__bar { display: flex; flex-direction: column; align-items: stretch; margin-top: 0; padding-top: 20px; gap: 28px; }
+    .hero__pitch { font-size: 22px; max-width: none; text-wrap: pretty; }
+    .hero__aside { align-items: stretch; text-align: left; gap: 16px; }
+    .hero__meta { font-size: 11px; }
+    .hero__aside .pi-btn { width: 100%; }
   }
 </style>
 
 <script>
-  import { initSignalFit } from '../scripts/fit';
-  initSignalFit();
+  import { initFit } from '../scripts/fit';
+
+  // Preview aid: ?nameStyle=caps or ?nameStyle=regular. Only those two exact
+  // values are honoured — a URL must never be able to put its own text on
+  // the page.
+  const requested = new URLSearchParams(location.search).get('nameStyle');
+  if (requested === 'caps' || requested === 'regular') {
+    document.querySelector<HTMLElement>('.hero__name')?.setAttribute('data-name-style', requested);
+  }
+  initFit();
 </script>

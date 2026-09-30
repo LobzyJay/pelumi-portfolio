@@ -1,43 +1,215 @@
 ---
+// Floating nav pill, fixed so it stays over content on scroll. On phones the
+// links collapse behind a "Menu" button that opens a full-screen ink panel.
+import Icon from './Icon.astro';
+import PatternField from './PatternField.astro';
 import { site } from '../data/site';
 
-// No Contact item: the contact card closes every page and carries the
-// colophon, so it is the footer — a nav link to it would be redundant.
+const path = Astro.url.pathname;
 const links = [
   { href: '/work/', label: 'Work' },
   { href: '/about/', label: 'About' },
 ];
+// /work/<slug>/ counts as "Work"
+const current = (href: string) => path === href || path.startsWith(href);
+const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
 ---
 
-<nav class="sg-nav">
-  <a href="/" class="sg-nav__brand">{site.name}</a>
-  <div class="sg-nav__links">
-    {links.map((l) => <a href={l.href} class="sg-nav__link">{l.label}</a>)}
-    <a href="/resume/" class="sg-nav__link sg-nav__link--last">{site.ctaResume}</a>
+<div class="pi-nav" data-nav>
+  <div class="pi-nav__pill">
+    <a class="pi-nav__brand" href="/">{site.name}</a>
+
+    <nav class="pi-nav__links" aria-label="Primary">
+      {links.map((l) => (
+        <a class="pi-nav__link" href={l.href} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a>
+      ))}
+      <a class="pi-nav__cta" href={site.contact.resumePdf} target="_blank" rel="noopener">
+        <Icon name="document" tone="ink" size={16} />Résumé
+      </a>
+    </nav>
+
+    <button
+      class="pi-nav__menu"
+      type="button"
+      aria-expanded="false"
+      aria-controls="pi-menu"
+      data-menu-toggle
+    >
+      <span data-menu-label>Menu</span>
+    </button>
   </div>
-</nav>
+</div>
+
+<div class="pi-menu" id="pi-menu" data-menu hidden>
+  <PatternField variant="links" />
+  <div class="pi-menu__body">
+    <nav class="pi-menu__links" aria-label="Menu">
+      {links.map((l) => (
+        <a href={l.href} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a>
+      ))}
+      <a href={site.contact.resumePdf} target="_blank" rel="noopener">Résumé</a>
+    </nav>
+    <div class="pi-menu__actions">
+      <a class="pi-btn pi-btn--pink" href={mailHref}><Icon name="mail" tone="ink" />Email</a>
+      <a class="pi-btn pi-btn--outline" href={site.contact.linkedin} target="_blank" rel="noopener me">
+        LinkedIn<Icon name="arrow-up-right" tone="cream" />
+      </a>
+    </div>
+  </div>
+</div>
 
 <style>
-  .sg-nav {
-    background: var(--sg-ink);
-    color: var(--sg-bone);
-    height: var(--sg-nav-h);
+  .pi-nav {
+    position: fixed;
+    top: var(--nav-top);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    padding-inline: var(--gutter);
+    /* the wrapper spans the page; only the pill takes clicks */
+    pointer-events: none;
+  }
+  .pi-nav__pill {
+    pointer-events: auto;
+    max-width: 1600px;
+    margin-inline: auto;
+    height: var(--nav-h);
+    padding: 0 10px 0 28px;
+    border-radius: 999px;
+    background: rgba(43, 21, 23, 0.94);
+    color: var(--cream);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-inline: var(--gutter);
-    border-bottom: 1px solid color-mix(in srgb, var(--sg-bone) 45%, transparent);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    box-shadow: 0 16px 40px rgba(43, 21, 23, 0.22);
+  }
+  /* The brand gives way before the links do: a long name is truncated with
+     an ellipsis rather than pushing the links out of the pill. */
+  .pi-nav__brand {
+    font-size: 17px;
+    font-weight: 500;
+    min-width: 0;
+    margin-right: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pi-nav__links, .pi-nav__menu { flex: none; }
+
+  .pi-nav__links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-  .sg-nav__links { display: flex; gap: 32px; }
+  .pi-nav__link { transition: color var(--dur) var(--ease); }
+  .pi-nav__link[aria-current='page'] { color: var(--pink); }
+  @media (hover: hover) and (pointer: fine) {
+    .pi-nav__link:hover { color: var(--pink); }
+  }
 
-  @media (max-width: 640px) {
-    .sg-nav { font-size: 12px; }
-    .sg-nav__links { gap: 20px; }
-    /* Keep the brand, Work and Résumé; About drops out. */
-    .sg-nav__link:not(:first-child):not(.sg-nav__link--last) { display: none; }
+  .pi-nav__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--pink);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 13px 20px;
+    transition: background-color var(--dur) var(--ease), transform var(--dur-press) var(--ease);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pi-nav__cta:hover { background: var(--pink-soft); }
+  }
+  .pi-nav__cta:active { transform: scale(0.98); }
+
+  /* the menu button only exists below the desktop breakpoint */
+  .pi-nav__menu { display: none; }
+
+  @media (max-width: 1023px) {
+    .pi-nav__pill { padding: 0 6px 0 20px; box-shadow: 0 12px 30px rgba(43, 21, 23, 0.22); }
+    .pi-nav__brand { font-size: 16px; }
+    .pi-nav__links { display: none; }
+    .pi-nav__menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--pink);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform var(--dur-press) var(--ease);
+    }
+    .pi-nav__menu:active { transform: scale(0.98); }
+  }
+
+  /* ---- full-screen menu ------------------------------------------------ */
+  .pi-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: var(--ink);
+    color: var(--cream);
+    overflow: hidden;
+    /* 240ms fade + 12px rise, per the interaction notes */
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 240ms var(--ease-out),
+      transform 240ms var(--ease-out);
+  }
+  .pi-menu.is-open { opacity: 1; transform: none; }
+  .pi-menu[hidden] { display: none; }
+
+  .pi-menu__body {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 108px var(--gutter) 28px;
+    overflow-y: auto;
+  }
+  .pi-menu__links { display: flex; flex-direction: column; gap: 8px; }
+  .pi-menu__links a {
+    font-size: 46px;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    padding-block: 6px;
+    transition: color var(--dur) var(--ease);
+  }
+  .pi-menu__links a[aria-current='page'] { color: var(--pink); }
+  @media (hover: hover) and (pointer: fine) {
+    .pi-menu__links a:hover { color: var(--pink); }
+  }
+  .pi-menu__actions { display: flex; flex-direction: column; gap: 10px; }
+  .pi-menu__actions .pi-btn { width: 100%; }
+
+  /* the menu only ever shows on small screens */
+  @media (min-width: 1024px) {
+    .pi-menu { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pi-menu { transform: none; transition: opacity 120ms linear; }
+    .pi-nav__cta:active, .pi-nav__menu:active { transform: none; }
   }
 </style>
+
+<script>
+  import { initMenu } from '../scripts/menu';
+  initMenu();
+</script>

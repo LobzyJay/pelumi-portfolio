@@ -1,0 +1,41 @@
+---
+// The coral band of overlapping pink folios. Wraps whatever sits on it and
+// owns the patterned ground, so the same ground can be a full-bleed band
+// (Home, About) or a rounded panel inside a page (case studies).
+//
+// The ground is its own layer — not a CSS background on the section — so it
+// can be swapped for moving parts without touching any content.
+interface Props {
+  /** corner radius of the band; 0 for full-bleed. */
+  radius?: number;
+  class?: string;
+}
+const { radius = 0, class: extra = '' } = Astro.props;
+---
+
+<div class:list={['folio', extra]} style={`--radius:${radius}px`} data-folio>
+  <div class="folio__ground" aria-hidden="true" data-folio-ground></div>
+  <div class="folio__content"><slot /></div>
+</div>
+
+<style>
+  .folio {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--salmon);
+  }
+  .folio__ground {
+    position: absolute;
+    inset: 0;
+    background: url('../assets/pattern/pi-folios.svg') center / cover no-repeat;
+  }
+  .folio__content { position: relative; z-index: 1; }
+
+  /* The phone artboard tiles a taller, narrower folio sheet down the band. */
+  @media (max-width: 1023px) {
+    .folio__ground {
+      background: url('../assets/pattern/pi-folios-mobile.svg') center top / 100% auto repeat-y;
+    }
+  }
+</style>

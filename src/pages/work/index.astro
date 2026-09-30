@@ -1,59 +1,172 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import PageHead from '../../components/PageHead.astro';
-import Chips from '../../components/Chips.astro';
-import Row from '../../components/Row.astro';
-import Field from '../../components/Field.astro';
+import HeroShell from '../../components/HeroShell.astro';
+import WorkRow from '../../components/WorkRow.astro';
+import { themes, themeNumbers } from '../../data/work';
 
 const docs = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
-const formats = [...new Set(docs.map((d) => d.data.format))];
-const years = [...new Set(docs.map((d) => d.data.date.getFullYear()))].sort();
+const lede =
+  'Decision memos, an advisory to the UN, a research paper, a national development plan and a field report. Academic policy exercises unless marked.';
+const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumbers(t, docs) }));
 ---
 
 <Layout
   title="Work"
-  description="Six documents — decision memos, an advisory to the UN, a research paper, a national development plan and a field report."
+  description="Six pieces of policy writing: decision memos, an advisory to the UN, a research paper, a national development plan and a field report. Academic exercises unless marked."
 >
-  <PageHead
-    word="Work"
-    metaLeft="Six documents · 2025–2026"
-  />
+  <HeroShell size="page" top={108} bottom={48}>
+    <div class="wk">
+      <div class="wk__top pi-label">
+        <span>Selected writing</span>
+        <span>{String(docs.length).padStart(2, '0')} pieces · 2025–26</span>
+      </div>
 
-  <section class="sg-worklist sg-band sg-band--bone">
-    <Chips formats={formats} years={years} />
-    <div class="sg-worklist__rows">
-      {docs.map((doc) => <Row doc={doc} />)}
+      <h1 class="wk__word">Work</h1>
+
+      <div class="wk__side">
+        <p class="wk__lede pi-body">{lede}</p>
+        <!-- desktop: themes live inside the card -->
+        <ul class="wk__themes">
+          {rows.map((r) => (
+            <li>
+              <a class="theme" href="#list" data-theme-link={r.id}>
+                <span>{r.title}</span><span class="theme__n">{r.numbers}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
+  </HeroShell>
 
-    <div class="sg-worklist__empty" data-filters-empty hidden>
-      <p class="sg-title sg-worklist__empty-title">Nothing matches that combination.</p>
-      <p class="sg-body sg-worklist__empty-body">
-        There are only {docs.length} documents, so some pairings come up short — an advisory memo from 2026,
-        for instance. Widen one of the filters, or start again.
-      </p>
-      <button type="button" class="sg-pill sg-pill--ink" data-filters-clear>Clear filters</button>
+  <!-- phone: themes become a "browse" list under the hero -->
+  <nav class="browse pi-wrap" aria-label="Browse by theme">
+    <span class="browse__label pi-label">Browse by theme</span>
+    {rows.map((r) => (
+      <a class="browse__row" href="#list" data-theme-link={r.id}>
+        <span>{r.title}</span><span class="browse__n pi-label">{r.numbers}</span>
+      </a>
+    ))}
+  </nav>
+
+  <section class="list pi-wrap" id="list">
+    <div class="list__rows">
+      {docs.map((doc) => <WorkRow doc={doc} />)}
     </div>
   </section>
-
-  <Field />
 </Layout>
 
 <style>
-  .sg-worklist__rows {
-    border-top: 4px solid var(--sg-ink);
-    border-bottom: 4px solid var(--sg-ink);
+  /* ---- hero card ---- */
+  .wk {
+    flex: 1;
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 32px;
+    padding: 48px 56px 52px;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
   }
-  .sg-worklist__rows > :global(.sg-row:first-child) { border-top: none; }
-
-  .sg-worklist__empty {
+  .wk__top { display: none; }
+  .wk__word {
+    grid-column: span 7;
+    font-size: clamp(160px, 20.8vw, 300px);
+    font-weight: 400;
+    line-height: 0.78;
+    letter-spacing: -0.05em;
+  }
+  .wk__side { grid-column: 8 / span 5; display: flex; flex-direction: column; gap: 24px; }
+  .wk__lede { font-size: 20px; line-height: 1.45; text-wrap: pretty; }
+  .wk__themes { display: flex; flex-direction: column; }
+  .theme {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    justify-content: space-between;
     gap: 16px;
-    padding: clamp(40px, 6vw, 72px) 0;
-    max-width: 52ch;
+    padding: 10px 0;
+    border-top: 1.5px dashed rgba(251, 168, 238, 0.35);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.4;
+    transition: background-color var(--dur) var(--ease);
   }
-  .sg-worklist__empty-title { font-size: clamp(22px, 2.4vw, 32px); }
-  .sg-worklist__empty-body { font-size: 16px; opacity: 0.7; }
+  .theme__n { color: var(--pink-soft); }
+  @media (hover: hover) and (pointer: fine) {
+    .theme:hover { background: rgba(244, 107, 200, 0.12); }
+  }
+  .theme:active { background: rgba(244, 107, 200, 0.2); }
+
+  .browse { display: none; }
+
+  /* ---- list ---- */
+  .list {
+    max-width: calc(1600px + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-block: 64px;
+  }
+  .list__rows { border-top: 1.5px solid var(--ink); }
+
+  /* ---- phone ---- */
+  @media (max-width: 1023px) {
+    .wk {
+      border-radius: 24px;
+      padding: 28px 24px;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 40px;
+      align-items: stretch;
+    }
+    .wk__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      color: var(--pink);
+    }
+    .wk__top span:last-child { color: var(--pink-soft); }
+    .wk__word {
+      font-size: clamp(132px, 34vw, 240px);
+      letter-spacing: -0.055em;
+      margin-left: -6px;
+      order: 2;
+    }
+    .wk__side { order: 3; gap: 24px; }
+    .wk__lede {
+      font-size: 17px;
+      line-height: 1.5;
+      padding-top: 20px;
+      border-top: 1.5px dashed rgba(251, 168, 238, 0.5);
+    }
+    .wk__themes { display: none; }
+
+    .browse { display: flex; flex-direction: column; padding-top: 24px; }
+    .browse__label { color: var(--plum); padding-bottom: 10px; }
+    .browse__row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      border-top: 1.5px dashed var(--hair);
+      font-family: var(--font-body);
+      font-size: 16px;
+      transition: background-color var(--dur) var(--ease);
+    }
+    .browse__row:first-of-type { border-top: 1.5px solid var(--ink); }
+    /* rust, not coral: coral is 3.19:1 on cream — fine for big numerals,
+       not for 11px text */
+    .browse__n { color: var(--rust); }
+    .browse__row:active { background: rgba(244, 107, 200, 0.16); }
+
+    .list { padding-top: 16px; padding-bottom: 40px; }
+  }
 </style>
+
+<script>
+  import { initThemes } from '../../scripts/themes';
+  initThemes();
+</script>

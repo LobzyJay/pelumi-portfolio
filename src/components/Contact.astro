@@ -1,0 +1,126 @@
+---
+// The closing card on every page: where to reach her, and the colophon.
+// The arches pattern sits behind the content and fades out toward the bottom,
+// so the footer row always lands on a solid ground.
+import Icon from './Icon.astro';
+import PatternField from './PatternField.astro';
+import { site } from '../data/site';
+
+const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
+---
+
+<section class="pi-contact" id="contact" aria-labelledby="contact-title">
+  <div class="pi-contact__card">
+    <PatternField variant="tile" />
+    <div class="pi-contact__content">
+      <p class="pi-contact__place pi-label pi-label--12">
+        <Icon name="pin" tone="cream" size={16} />{site.city}
+      </p>
+
+      <div class="pi-contact__row">
+        <h2 class="pi-contact__title" id="contact-title">Recommendation: <br />get in touch.</h2>
+        <div class="pi-contact__actions">
+          <a class="pi-btn pi-btn--pink" href={mailHref}><Icon name="mail" tone="ink" />Email</a>
+          <a class="pi-btn pi-btn--outline" href={site.contact.linkedin} target="_blank" rel="noopener me">
+            LinkedIn<Icon name="arrow-up-right" tone="cream" />
+          </a>
+          <a class="pi-btn pi-btn--outline" href={site.contact.resumePdf} target="_blank" rel="noopener">
+            <Icon name="document" tone="cream" />Résumé
+          </a>
+        </div>
+      </div>
+
+      <div class="pi-contact__foot pi-label pi-label--12">
+        <span>{site.legalName}</span>
+        <span>{site.copyright}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pi-contact {
+    padding: 43px var(--gutter);
+    max-width: calc(1600px + var(--gutter) * 2);
+    margin-inline: auto;
+  }
+  .pi-contact__card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 40px;
+    padding: 72px;
+    background: var(--ink);
+    color: var(--cream);
+  }
+  /* The design stacks a fade over the pattern: clear at the top, solid ink by
+     78%. Done as an overlay so the pattern layer itself can move. */
+  .pi-contact__card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(43, 21, 23, 0) 0%, var(--ink) 78%);
+  }
+  .pi-contact__content { position: relative; z-index: 2; }
+  .pi-contact__foot span { overflow-wrap: anywhere; }
+  /* flex children default to min-width:auto, so one long word could widen the
+     whole card; let them shrink instead */
+  .pi-contact__row > * { min-width: 0; }
+
+  .pi-contact__place {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 24px;
+    color: var(--pink-soft);
+  }
+  .pi-contact__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .pi-contact__title {
+    font-size: clamp(56px, 6vw, 86px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+  }
+  .pi-contact__actions { display: flex; gap: 10px; flex-wrap: nowrap; flex-shrink: 0; }
+  .pi-contact__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 24px;
+    margin-top: 76px;
+    padding-top: 16px;
+    border-top: 1.5px dashed var(--hair-pink);
+    color: var(--pink-soft);
+  }
+
+  @media (max-width: 1023px) {
+    .pi-contact { padding: 0 var(--gutter) 16px; }
+    .pi-contact__card { border-radius: 28px; padding: 36px 24px 24px; }
+    .pi-contact__card > .pi-contact__content {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .pi-contact__place { justify-content: flex-start; margin: 0; font-size: 11px; }
+    .pi-contact__row { flex-direction: column; align-items: stretch; gap: 28px; }
+    .pi-contact__title { font-size: clamp(38px, 7vw, 64px); line-height: 1; letter-spacing: -0.04em; }
+    .pi-contact__title br { display: none; }
+    .pi-contact__actions { flex-direction: column; flex-shrink: 1; }
+    .pi-contact__actions .pi-btn { width: 100%; }
+    .pi-contact__foot {
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 0;
+      padding-top: 14px;
+      font-size: 11px;
+    }
+  }
+</style>

@@ -22,3 +22,11 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# design-handoff exports — contain files marked "do not publish" in the PRD
+*.zip
+uploads/
+design_handoff*/
+.thumbnail/
+.pdf-staging/
+.gstack/

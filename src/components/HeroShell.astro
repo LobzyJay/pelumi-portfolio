@@ -1,0 +1,61 @@
+---
+// The pink-to-coral hero ground with the line pattern behind it. Pages put
+// their own dark card inside; this only owns the ground, the pattern, the
+// sizing and the big-screen cap.
+//
+// Heroes are sized to their content, not the viewport — the cream section
+// starting below the fold is intentional (it signals there is more to
+// scroll). Home is at least 900px tall, inner pages at least 720px.
+import PatternField from './PatternField.astro';
+
+interface Props {
+  size?: 'home' | 'page';
+  /** px of ground above the card; clears the floating nav. */
+  top?: number;
+  bottom?: number;
+}
+const { size = 'page', top = 108, bottom = 48 } = Astro.props;
+---
+
+<header class="pi-hero" data-size={size} style={`--top:${top}px; --bottom:${bottom}px;`}>
+  <PatternField variant="links" />
+  <div class="pi-hero__inner">
+    <slot />
+  </div>
+</header>
+
+<style>
+  .pi-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--hero-ground);
+    padding: var(--top) var(--gutter) var(--bottom);
+    min-height: 720px;
+    box-sizing: border-box;
+    display: flex;
+  }
+  .pi-hero[data-size='home'] { min-height: 900px; }
+
+  /* On 1920+ screens the card stops growing and centres; the ground and the
+     pattern keep filling edge to edge. */
+  .pi-hero__inner {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 1023px) {
+    .pi-hero,
+    .pi-hero[data-size='home'] {
+      /* mobile heroes hug their content */
+      min-height: 0;
+      padding: 84px var(--gutter) 24px;
+    }
+  }
+</style>

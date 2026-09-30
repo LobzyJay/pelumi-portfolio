@@ -1,20 +1,21 @@
 ---
-// The site shell. No view transitions and no reveal script: this design is
-// static by decision, and hover/press are the only state changes.
-//
-// Every page closes on the contact card (src/components/Field.astro), which
-// carries the colophon row — so there is no separate footer band here.
-import '../styles/global.css';
-import '../styles/signal.css';
+// The site shell: fonts, meta, the floating nav, and the closing contact card.
+import '../styles/theme.css';
 import Nav from '../components/Nav.astro';
+import Contact from '../components/Contact.astro';
+import { site } from '../data/site';
+import archivo from '../assets/fonts/archivo-variable.woff2?url';
+import interTight from '../assets/fonts/inter-tight-variable.woff2?url';
 
 interface Props {
   title: string;
   description: string;
-  /** Set on pages that should stay out of search results (e.g. 404). */
+  /** Closing contact card. On by default; only the 404 might opt out. */
+  contact?: boolean;
+  /** Keep a page out of search results (e.g. the 404). */
   noindex?: boolean;
 }
-const { title, description, noindex = false } = Astro.props;
+const { title, description, contact = true, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
@@ -23,29 +24,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} — Pelumi Igbalajobi</title>
+    <title>{title} — {site.name}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- Ink, matching the hero: the browser chrome and any overscroll at the
-         top of the page continue the hero rather than cutting it off. -->
-    <meta name="theme-color" content="#14130f" />
-    <style>
-      @font-face {
-        font-family: 'Archivo';
-        src: url('../assets/fonts/archivo-variable.woff2') format('woff2-variations');
-        font-weight: 400 900;
-        font-stretch: 62% 125%;
-        font-display: swap;
-      }
-      body { margin: 0; background: oklch(0.97 0.01 90); }
-    </style>
+    <!-- Matches the top of every hero, so browser chrome blends into the page. -->
+    <meta name="theme-color" content="#f58cb6" />
+    <!-- The two faces above the fold, fetched early so text does not reflow. -->
+    <link rel="preload" href={archivo} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interTight} as="font" type="font/woff2" crossorigin />
   </head>
   <body>
-    <div class="signal">
-      <Nav />
-      <main id="main"><slot /></main>
-    </div>
+    <a class="pi-skip" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+      {contact && <Contact />}
+    </main>
   </body>
 </html>

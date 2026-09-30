@@ -1,55 +1,68 @@
 ---
-// 404. Uses the same fitted display head as the other inner pages, so a
-// missing URL still lands somewhere that looks like the site rather than on
-// a bare server page. noindex, since an error page has no business in
-// search results.
+// A missing URL still lands somewhere that looks like the site. noindex: an
+// error page has no business in search results.
 import Layout from '../layouts/Layout.astro';
-import PageHead from '../components/PageHead.astro';
-import Field from '../components/Field.astro';
+import HeroShell from '../components/HeroShell.astro';
+import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
-
-const routes = [
-  { href: '/work/', label: 'Work', note: 'Six documents, filterable' },
-  { href: '/about/', label: 'About', note: 'Background and education' },
-  { href: '/resume/', label: 'Résumé', note: 'One page, printable' },
-];
 ---
 
 <Layout
   title="Page not found"
-  description="That page does not exist — Pelumi Igbalajobi, global policy analyst."
+  description={`That page does not exist — ${site.name}, global policy analyst.`}
   noindex
 >
-  <PageHead word="404" metaLeft="Page not found" metaRight={site.kicker} />
-
-  <section class="sg-404 sg-band sg-band--bone">
-    <p class="sg-404__lede sg-title">That page does not exist.</p>
-    <ul class="sg-404__routes">
-      {routes.map((r) => (
-        <li>
-          <a href={r.href} class="sg-404__route grid-12">
-            <span class="sg-404__label sg-title col-span-4">{r.label}</span>
-            <span class="sg-mono sg-404__note col-span-7">{r.note}</span>
-            <span class="sg-404__arrow col-span-1" aria-hidden="true">→</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  <Field />
+  <HeroShell size="page" top={108} bottom={48}>
+    <div class="nf">
+      <span class="nf__k pi-label pi-label--12">Page not found</span>
+      <h1 class="nf__code">404</h1>
+      <div class="nf__foot">
+        <p class="nf__line">{site.notFoundLine}</p>
+        <div class="nf__actions">
+          <a class="pi-btn pi-btn--pink" href="/">Home<Icon name="arrow-right" tone="ink" /></a>
+          <a class="pi-btn pi-btn--outline" href="/work/">Work</a>
+          <a class="pi-btn pi-btn--outline" href="/about/">About</a>
+        </div>
+      </div>
+    </div>
+  </HeroShell>
 </Layout>
 
 <style>
-  .sg-404__lede { font-size: clamp(22px, 2.4vw, 34px); max-width: 20ch; }
-  .sg-404__routes { margin-top: var(--sg-band); }
-  .sg-404__route {
-    align-items: baseline;
-    padding: 20px 0;
-    border-top: 2px solid var(--sg-ink);
+  .nf {
+    flex: 1;
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 32px;
+    padding: 48px 56px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
   }
-  .sg-404__routes li:last-child .sg-404__route { border-bottom: 2px solid var(--sg-ink); }
-  .sg-404__label { font-size: clamp(20px, 2vw, 28px); }
-  .sg-404__note { opacity: 0.6; }
-  .sg-404__arrow { font-size: 20px; text-align: right; }
+  .nf__k { color: var(--pink); }
+  .nf__code {
+    font-size: clamp(160px, 26vw, 380px);
+    font-weight: 400;
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+  }
+  .nf__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-top: 28px;
+    border-top: 1.5px dashed rgba(251, 168, 238, 0.5);
+  }
+  .nf__line { font-size: 32px; line-height: 1.2; letter-spacing: -0.015em; }
+  .nf__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  @media (max-width: 1023px) {
+    .nf { border-radius: 24px; padding: 28px 24px; min-height: 480px; }
+    .nf__line { font-size: 22px; }
+    .nf__actions { width: 100%; flex-direction: column; }
+    .nf__actions .pi-btn { width: 100%; }
+  }
 </style>

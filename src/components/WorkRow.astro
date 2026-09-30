@@ -1,0 +1,108 @@
+---
+// One row of the Work list. The whole row is the link.
+//
+// States (interaction notes): hover tints the row and turns the number pink;
+// active deepens the tint and shifts the title 2px right; focus is the
+// 2px pink ring. `is-flash` is the brief highlight the theme rows apply.
+import { pad, provenance, themesOf, type Doc } from '../data/work';
+
+interface Props { doc: Doc }
+const { doc } = Astro.props;
+const d = doc.data;
+---
+
+<a
+  class="row"
+  href={`/work/${doc.id}/`}
+  id={`doc-${pad(d.order)}`}
+  data-themes={themesOf(doc.id).join(' ')}
+>
+  <span class="row__n">{pad(d.order)}</span>
+  <span class="row__main">
+    <span class="row__question">{d.question}</span>
+    <span class="row__title pi-body">{d.title}</span>
+  </span>
+  <span class="row__side">
+    <span class="row__format">{d.format}</span>
+    <span class="row__meta pi-label pi-label--12">{d.dateLabel} · {provenance[d.label]}</span>
+  </span>
+</a>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr) 300px;
+    gap: 32px;
+    padding: 36px 0;
+    border-bottom: 1.5px dashed var(--hair);
+    align-items: start;
+    transition: background-color var(--dur) var(--ease);
+  }
+  .row__n {
+    font-size: 64px;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: var(--coral);
+    transition: color var(--dur) var(--ease);
+  }
+  .row__main { display: flex; flex-direction: column; gap: 10px; }
+  .row__question {
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+    transition: transform var(--dur) var(--ease);
+  }
+  .row__title { font-size: 16px; color: var(--plum); transition: transform var(--dur) var(--ease); }
+  .row__side { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .row__format {
+    background: var(--tint);
+    color: var(--pink-deep);
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size: 15px;
+  }
+  .row__meta { color: var(--plum); text-align: right; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .row:hover { background: rgba(244, 107, 200, 0.08); }
+    .row:hover .row__n { color: var(--pink-text); }
+  }
+  .row:active { background: rgba(244, 107, 200, 0.16); }
+  .row:active .row__question,
+  .row:active .row__title { transform: translateX(2px); }
+
+  /* applied for ~1.8s when a theme row sends you here */
+  .row.is-flash { background: rgba(244, 107, 200, 0.16); }
+
+  @media (max-width: 1023px) {
+    .row { display: flex; flex-direction: column; gap: 10px; padding: 24px 0; }
+    .row__n { font-size: 44px; }
+    .row__question { font-size: 23px; }
+    .row__title { font-size: 14px; line-height: 1.45; }
+    .row__side {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+    /* phones show the format as a plain label, not a chip */
+    .row__format {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1.7;
+    }
+    .row__meta { font-size: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .row:active .row__question, .row:active .row__title { transform: none; }
+  }
+</style>
