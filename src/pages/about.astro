@@ -17,7 +17,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   description={`${site.name} is a global policy analyst in Washington, D.C. with a Master of Global Policy from the LBJ School, UT Austin, and experience in anti-trafficking, advocacy and development work.`}
 >
   <HeroShell size="page" top={112} bottom={56}>
-    <div class="intro">
+    <div class="intro" data-morph-source>
       <div class="intro__top pi-label pi-label--12">
         <span class="intro__kicker pi-enter">About · Global policy analyst · {site.city}</span>
         <span class="intro__kicker-m">About</span>
@@ -314,21 +314,12 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     gap: 24px;
   }
 
-  /* ---- phone / tablet ---- */
+  /* ---- tablet and below: the page tightens, the hero card keeps its layout ---- */
   @media (max-width: 1023px) {
-    .intro { border-radius: 18px; display: flex; flex-direction: column; gap: 24px; flex: none; }
-    .intro__top { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; }
-    .intro__kicker { display: none; }
-    .intro__kicker-m { display: inline; }
-    .intro__city { display: inline; color: var(--pink-soft); }
-    .intro__portrait {
-      align-self: center;
-      justify-self: auto;
-      width: 200px;
-      height: 200px;
-      margin-block: 8px;
-      box-shadow: 0 0 0 5px var(--pink);
-    }
+    .intro { border-radius: 18px; flex: none; }
+    /* a slightly smaller portrait so it still sits beside the kicker in the top
+       right, exactly as on desktop */
+    .intro__portrait { width: 180px; height: 180px; box-shadow: 0 0 0 5px var(--pink); }
     .intro__bottom { gap: 24px; }
     .intro__line { font-size: clamp(44px, 9vw, 72px); max-width: none; }
     .intro__who { gap: 4px; font-size: 16px; }
@@ -354,5 +345,24 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     .frame__a, .frame__b { border-radius: 18px; }
     .frame__cta { flex-direction: column; align-items: stretch; gap: 14px; margin-top: 20px; padding-top: 0; border-top: 0; }
     .frame__cta .pi-label { display: none; }
+  }
+
+  /* ---- phone only: the portrait moves to the middle ----
+     On a phone there is no room beside the kicker, so the hero card stacks into
+     one column and the portrait centres above the heading. From tablet width up
+     it stays in the top-right corner, as on desktop. */
+  @media (max-width: 599px) {
+    .intro { display: flex; flex-direction: column; gap: 24px; }
+    .intro__top { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; }
+    .intro__kicker { display: none; }
+    .intro__kicker-m { display: inline; }
+    .intro__city { display: inline; color: var(--pink-soft); }
+    .intro__portrait {
+      align-self: center;
+      justify-self: auto;
+      width: 200px;
+      height: 200px;
+      margin-block: 8px;
+    }
   }
 </style>

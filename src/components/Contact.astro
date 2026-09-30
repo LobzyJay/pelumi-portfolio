@@ -6,11 +6,17 @@ import Icon from './Icon.astro';
 import PatternField from './PatternField.astro';
 import { site } from '../data/site';
 
+// Résumé leads to its page; on the page itself it downloads the PDF instead of
+// linking to where you already are.
+const onResume = Astro.url.pathname.startsWith('/resume');
+const resumeLink = onResume
+  ? { href: site.contact.resumePdf, download: 'Igbalajobi-Oluwapelumi-Resume.pdf' }
+  : { href: site.contact.resumePage };
 const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
 ---
 
 <section class="pi-contact" id="contact" aria-labelledby="contact-title">
-  <div class="pi-contact__card">
+  <div class="pi-contact__card" data-morph-source>
     <PatternField variant="tile" />
     <div class="pi-contact__content">
       <p class="pi-contact__place pi-label pi-label--12" data-reveal>
@@ -22,9 +28,9 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
         <div class="pi-contact__actions" data-reveal style="--reveal-delay:200ms">
           <a class="pi-btn pi-btn--pink" href={mailHref}><Icon name="mail" />Email</a>
           <a class="pi-btn pi-btn--outline" href={site.contact.linkedin} target="_blank" rel="noopener me">
-            LinkedIn<Icon name="arrow-up-right" />
+            <Icon name="linkedin" />LinkedIn
           </a>
-          <a class="pi-btn pi-btn--outline" href={site.contact.resumePdf} target="_blank" rel="noopener">
+          <a class="pi-btn pi-btn--outline" {...resumeLink}>
             <Icon name="document" />Résumé
           </a>
         </div>
@@ -32,7 +38,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
 
       <div class="pi-contact__foot pi-label pi-label--12" data-reveal style="--reveal-delay:320ms">
         <span>{site.legalName}</span>
-        <span>{site.copyright}</span>
+        <span>© {site.year} · {site.studio}</span>
       </div>
     </div>
   </div>

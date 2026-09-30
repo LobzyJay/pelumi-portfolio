@@ -66,6 +66,12 @@
      heading, a paragraph and a button line up across heroes, not just within one. */
   --card-x: 56px;
   --card-y: 48px;
+  /* The nav pill's inner padding. The mobile menu uses the same two numbers to
+     inset its content, so the menu's text starts exactly where the header's text
+     starts (and its buttons end where the Close button ends) — one source, so
+     they cannot drift apart. */
+  --pill-pad-l: 28px;
+  --pill-pad-r: 10px;
 
   /* motion */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -81,6 +87,8 @@
     --nav-h: 56px;
     --card-x: 24px;
     --card-y: 28px;
+    --pill-pad-l: 20px;
+    --pill-pad-r: 6px;
   }
 }
 
@@ -227,6 +235,40 @@ button { font: inherit; color: inherit; }
   @keyframes pi-reveal-failsafe {
     to { opacity: 1; transform: none; }
   }
+}
+
+/* ---- the page's own card contents step aside for the mobile menu ----------
+   When the menu grows out of a brown card (menu.ts marks that with
+   html[data-menu-open='card']), everything inside that card — the name, the
+   pitch, the buttons — leaves on purpose, fading and lifting away as the brown
+   washes over, instead of being caught half-covered. On close it returns only
+   once the panel has shrunk back onto the card.
+
+   `filter: opacity()` and the separate `translate` property are used rather than
+   `opacity` and `transform`: the hero text has entrance animations that hold
+   opacity and transform at their end values, and an animation beats a
+   transition on the same property, so a plain opacity fade here would do
+   nothing. Nothing animates filter or translate, so this works.
+
+   This file is global (not scoped to the nav) because the cards live in other
+   components. */
+[data-morph-source] > * {
+  /* returning (menu closing): wait for the panel to get back onto the card */
+  transition:
+    filter 320ms var(--ease-out) 380ms,
+    translate 420ms var(--ease-out) 380ms;
+}
+html[data-menu-open='card'] [data-morph-source] > * {
+  filter: opacity(0);
+  translate: 0 -10px;
+  /* leaving (menu opening): out in 130ms, before the brown is opaque over it */
+  transition:
+    filter 130ms linear,
+    translate 200ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-morph-source] > *,
+  html[data-menu-open='card'] [data-morph-source] > * { filter: none; translate: none; transition: none; }
 }
 
 /* ---- reduced motion ---------------------------------------------------

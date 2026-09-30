@@ -58,6 +58,8 @@ export const site = {
     linkedinLabel: 'linkedin.com/in/oluwapelumiigbalajobi',
     // The résumé PDF, published as supplied (owner's decision).
     resumePdf: '/documents/Igbalajobi-Oluwapelumi-Resume.pdf',
+    // "Résumé" in the nav, menu and footer goes here; the PDF is downloaded from this page.
+    resumePage: '/resume/',
   },
 
   // About
@@ -73,8 +75,9 @@ export const site = {
   offTheClock:
     'Travel, films, documentaries, reading, cuisines, online courses. French (intermediate) and Japanese (beginner).',
 
-  // Footer. The design's right-hand slot read "© 2026 · Layout Studio" — a
-  // leftover from another project — so it carries the year only.
-  copyright: '© 2026',
+  // Footer credit: who made the site, and the year. The studio is Layout Studio
+  // (it was in the design all along; an earlier pass mistook it for a leftover).
+  studio: 'Layout Studio',
+  year: 2026,
   notFoundLine: 'That page does not exist.',
 } as const;

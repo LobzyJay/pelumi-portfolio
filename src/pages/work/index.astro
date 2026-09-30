@@ -16,10 +16,9 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
   description="Six pieces of policy writing: decision memos, an advisory to the UN, a research paper, a national development plan and a field report. Academic exercises unless marked."
 >
   <HeroShell size="page" top={108} bottom={48}>
-    <div class="wk">
+    <div class="wk" data-morph-source>
       <div class="wk__top pi-label pi-enter">
         <span>Selected writing</span>
-        <span>{String(docs.length).padStart(2, '0')} pieces · 2025–26</span>
       </div>
 
       <h1 class="wk__word pi-enter">Work</h1>
@@ -128,7 +127,6 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
       gap: 12px;
       color: var(--pink);
     }
-    .wk__top span:last-child { color: var(--pink-soft); }
     .wk__word {
       font-size: clamp(132px, 34vw, 240px);
       letter-spacing: -0.055em;

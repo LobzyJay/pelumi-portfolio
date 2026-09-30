@@ -1,8 +1,7 @@
 ---
 // Floating nav pill, fixed so it stays over content on scroll. On phones the
-// links collapse behind a "Menu" button that opens a full-screen ink panel.
+// links collapse behind a "Menu" button that GROWS into a full-screen pink panel.
 import Icon from './Icon.astro';
-import PatternField from './PatternField.astro';
 import { site } from '../data/site';
 
 const path = Astro.url.pathname;
@@ -10,6 +9,7 @@ const links = [
   { href: '/work/', label: 'Work' },
   { href: '/about/', label: 'About' },
 ];
+const resume = { href: site.contact.resumePage, label: 'Résumé' };
 // /work/<slug>/ counts as "Work"
 const current = (href: string) => path === href || path.startsWith(href);
 const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site.contact.emailSubject)}`;
@@ -23,8 +23,8 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
       {links.map((l) => (
         <a class="pi-nav__link" href={l.href} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a>
       ))}
-      <a class="pi-nav__cta" href={site.contact.resumePdf} target="_blank" rel="noopener">
-        <Icon name="document" size={16} />Résumé
+      <a class="pi-nav__cta" href={resume.href} aria-current={current(resume.href) ? 'page' : undefined}>
+        <Icon name="document" size={16} />{resume.label}
       </a>
     </nav>
 
@@ -33,26 +33,32 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
       type="button"
       aria-expanded="false"
       aria-controls="pi-menu"
+      aria-label="Open menu"
       data-menu-toggle
     >
-      <span data-menu-label>Menu</span>
+      <!-- Both words sit in the same spot and swap by sliding and fading, so the
+           button keeps one size (the panel grows from its exact rectangle) and
+           the change is a motion, not a blink. The words are decoration: the
+           button's accessible name is the aria-label the script keeps current. -->
+      <span class="pi-nav__label" aria-hidden="true">
+        <span class="pi-nav__word pi-nav__word--menu">Menu</span>
+        <span class="pi-nav__word pi-nav__word--close">Close</span>
+      </span>
     </button>
   </div>
 </div>
 
 <div class="pi-menu" id="pi-menu" data-menu hidden>
-  <PatternField variant="links" animate={false} />
   <div class="pi-menu__body">
     <nav class="pi-menu__links" aria-label="Menu">
-      {links.map((l) => (
-        <a href={l.href} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a>
+      {[...links, resume].map((l, i) => (
+        <a href={l.href} style={`--i:${i}`} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a>
       ))}
-      <a href={site.contact.resumePdf} target="_blank" rel="noopener">Résumé</a>
     </nav>
     <div class="pi-menu__actions">
-      <a class="pi-btn pi-btn--pink" href={mailHref}><Icon name="mail" />Email</a>
-      <a class="pi-btn pi-btn--outline" href={site.contact.linkedin} target="_blank" rel="noopener me">
-        LinkedIn<Icon name="arrow-up-right" />
+      <a class="pi-btn pi-btn--pink" style="--i:3" href={mailHref}><Icon name="mail" />Email</a>
+      <a class="pi-btn pi-btn--outline" style="--i:4" href={site.contact.linkedin} target="_blank" rel="noopener me">
+        <Icon name="linkedin" />LinkedIn
       </a>
     </div>
   </div>
@@ -74,7 +80,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     max-width: 1600px;
     margin-inline: auto;
     height: var(--nav-h);
-    padding: 0 10px 0 28px;
+    padding: 0 var(--pill-pad-r) 0 var(--pill-pad-l);
     border-radius: 999px;
     color: var(--cream);
     display: flex;
@@ -147,7 +153,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
   .pi-nav__menu { display: none; }
 
   @media (max-width: 1023px) {
-    .pi-nav__pill { padding: 0 6px 0 20px; box-shadow: 0 12px 30px rgba(43, 21, 23, 0.22); }
+    .pi-nav__pill { box-shadow: 0 12px 30px rgba(43, 21, 23, 0.22); }
     .pi-nav__brand { font-size: 16px; }
     .pi-nav__links { display: none; }
     .pi-nav__menu {
@@ -169,9 +175,48 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
       transition: transform var(--dur-press) var(--ease);
     }
     .pi-nav__menu:active { transform: scale(0.98); }
+
+    .pi-nav__label { display: grid; overflow: hidden; line-height: 1.6; }
+    .pi-nav__word {
+      grid-area: 1 / 1;
+      text-align: center;
+      transition:
+        opacity 240ms var(--ease-out),
+        transform 420ms var(--ease-out);
+    }
+    .pi-nav__word--close { opacity: 0; transform: translateY(105%); }
+    .pi-nav__menu[aria-expanded='true'] .pi-nav__word--menu { opacity: 0; transform: translateY(-105%); }
+    .pi-nav__menu[aria-expanded='true'] .pi-nav__word--close { opacity: 1; transform: none; }
   }
 
-  /* ---- full-screen menu ------------------------------------------------ */
+  /* ---- the header while the menu is open ----------------------------------
+     The glass header stays in view above the menu. Dark glass would disappear
+     against a brown screen, so while the menu is open it turns to a light frost:
+     a faint cream tint, a hairline edge, and the same blur. The pink Menu button
+     (now "Close") stays pink, sitting in it. Eased, so the bar and the button
+     hand over to the menu instead of snapping. */
+  .pi-nav__pill {
+    transition:
+      background-color 280ms var(--ease),
+      box-shadow 280ms var(--ease);
+  }
+  :global(html[data-menu-open]) .pi-nav__pill {
+    background: rgba(255, 247, 239, 0.08);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 247, 239, 0.16),
+      inset 0 1px 0 rgba(255, 247, 239, 0.22),
+      0 16px 40px rgba(0, 0, 0, 0.28);
+  }
+
+  /* ---- full-screen menu: a brown card becomes the blade ---------------------
+     The panel is brown, exactly the colour of the page's brown cards. menu.ts
+     finds the brown card that is on screen, lays the panel over that card's
+     rectangle and radius (--t/--r/--b/--l/--br), and the clip opens out to the
+     whole screen. At the first frame the panel *is* the card; the card's text
+     goes because brown covers it, and the card seems to swell into a blank blade.
+     If no brown card is on screen it grows from the Menu button instead.
+     Strong ease-in-out: a large movement, slow at both ends, quick through the
+     middle. */
   .pi-menu {
     position: fixed;
     inset: 0;
@@ -179,14 +224,29 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     background: var(--ink);
     color: var(--cream);
     overflow: hidden;
-    /* 240ms fade + 12px rise, per the interaction notes */
+    /* fallback if the script hasn't measured yet: a pill at the top right */
+    --t: 12px; --r: 16px; --b: calc(100dvh - 68px); --l: calc(100vw - 100px); --br: 22px;
+    clip-path: inset(var(--t) var(--r) var(--b) var(--l) round var(--br));
     opacity: 0;
-    transform: translateY(12px);
+    /* CLOSING: shrink back onto the card (560ms), and only in the last 160ms
+       dissolve, so the card's text reappears as the brown lifts. Quicker than
+       opening: slow where you are deciding, fast where the system is responding. */
     transition:
-      opacity 240ms var(--ease-out),
-      transform 240ms var(--ease-out);
+      clip-path 560ms cubic-bezier(0.77, 0, 0.175, 1),
+      opacity 160ms linear 400ms;
   }
-  .pi-menu.is-open { opacity: 1; transform: none; }
+  .pi-menu.is-open {
+    clip-path: inset(0 0 0 0 round 0px);
+    opacity: 1;
+    /* OPENING: the brown washes over the card in 120ms and the clip is already
+       moving 50ms in — no dead time. The curve is fast off the mark and settles
+       gently (an "ease-out with a little ease-in"): the screen leaps toward you,
+       then glides to a stop. (A symmetrical ease-in-out sat almost still for the
+       first 400ms, which read as a pause.) */
+    transition:
+      clip-path 680ms cubic-bezier(0.32, 0.72, 0, 1) 50ms,
+      opacity 120ms linear;
+  }
   .pi-menu[hidden] { display: none; }
 
   .pi-menu__body {
@@ -196,7 +256,9 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 108px var(--gutter) 28px;
+    /* The menu's content sits in the same box as the header's: it starts where
+       the header's text starts and its buttons end where the Close button ends. */
+    padding: 108px calc(var(--gutter) + var(--pill-pad-r)) 28px calc(var(--gutter) + var(--pill-pad-l));
     overflow-y: auto;
   }
   .pi-menu__links { display: flex; flex-direction: column; gap: 8px; }
@@ -205,7 +267,6 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     line-height: 1.1;
     letter-spacing: -0.04em;
     padding-block: 6px;
-    transition: color var(--dur) var(--ease);
   }
   .pi-menu__links a[aria-current='page'] { color: var(--pink); }
   @media (hover: hover) and (pointer: fine) {
@@ -214,14 +275,52 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
   .pi-menu__actions { display: flex; flex-direction: column; gap: 10px; }
   .pi-menu__actions .pi-btn { width: 100%; }
 
+  /* The menu's content arrives once the brown is well underway: each line rises
+     and fades in a beat after the one before it. On the way out it leaves fast,
+     so the panel shrinks back around an empty shape. */
+  .pi-menu__links a,
+  .pi-menu__actions > .pi-btn {
+    opacity: 0;
+    translate: 0 28px;
+    transition:
+      opacity 180ms linear,
+      translate 180ms linear,
+      color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+  .pi-menu.is-open .pi-menu__links a,
+  .pi-menu.is-open .pi-menu__actions > .pi-btn {
+    opacity: 1;
+    translate: 0 0;
+    /* starts 200ms in, while the panel is still opening, and steps down the list
+       55ms at a time — the whole thing has settled by about 900ms */
+    transition:
+      opacity 420ms var(--ease-out) calc(200ms + var(--i, 0) * 55ms),
+      translate 520ms var(--ease-out) calc(200ms + var(--i, 0) * 55ms),
+      color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+
   /* the menu only ever shows on small screens */
   @media (min-width: 1024px) {
     .pi-menu { display: none; }
   }
 
+  /* Reduced motion: no growing, no rising, nothing stepping aside — the screen
+     simply fades. */
   @media (prefers-reduced-motion: reduce) {
-    .pi-menu { transform: none; transition: opacity 120ms linear; }
+    .pi-menu,
+    .pi-menu.is-open { clip-path: none; }
+    .pi-menu { transition: opacity 120ms linear; }
+    .pi-menu.is-open { transition: opacity 120ms linear; }
+    .pi-menu__links a,
+    .pi-menu__actions > .pi-btn,
+    .pi-menu.is-open .pi-menu__links a,
+    .pi-menu.is-open .pi-menu__actions > .pi-btn { opacity: 1; translate: none; transition: none; }
     .pi-nav__cta:active, .pi-nav__menu:active { transform: none; }
+    .pi-nav__word { transition: opacity 120ms linear; transform: none !important; }
   }
 </style>
 

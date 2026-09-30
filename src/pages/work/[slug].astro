@@ -37,7 +37,7 @@ const eyebrow = `${pad(d.order)} · ${d.format} · ${d.dateLabel}`;
 
 <Layout title={d.title} description={d.question}>
   <HeroShell size="page" top={112} bottom={48}>
-    <div class="memo">
+    <div class="memo" data-morph-source>
       <span class="memo__eyebrow pi-label pi-label--12 pi-enter">
         <Icon name={formatIcon[d.format]} size={18} />{eyebrow}
       </span>
