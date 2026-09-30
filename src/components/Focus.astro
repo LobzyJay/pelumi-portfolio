@@ -18,7 +18,7 @@ const count = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'e
   <h2 class="focus__run">
     {areas.map((area, i) => (
       <>
-        <span class="focus__area" style={`--i:${i}`}>{area}</span>
+        <span class="focus__area">{area}</span>
         {/* Astro strips whitespace between adjacent elements, and with no
             space characters there is nowhere for the line to wrap. */}
         {i < areas.length - 1 && <>{' '}<span class="focus__sep" aria-hidden="true">/</span>{' '}</>}
@@ -52,26 +52,29 @@ const count = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'e
   }
   .focus__area { white-space: nowrap; color: var(--ink); }
 
-  /* Scroll-driven: the line starts faint and each word firms up to full ink as
-     it rises through the viewport, in reading order (--i is the word's
-     position, so each starts a little after the one before it). It is tied to
-     the scroll itself — stop scrolling and it stops — rather than playing on a
-     timer, which is what makes it feel like reading down the page.
+  /* Scroll-driven, LINE BY LINE: the whole line starts faint, and each line
+     firms up to full ink as it rises through the viewport — first line, then
+     the next a beat behind. Every word (and its slash) is tied to its own
+     position on the page, and words on one line share a height, so a line
+     moves as one without the script knowing where the lines break. It is tied
+     to the scroll itself — stop scrolling and it stops — which is what makes it
+     feel like reading down the page.
      Progressive enhancement: where scroll-driven animation isn't supported,
      none of this applies and the words are simply solid. */
   @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
-      .focus__area {
+      .focus__area,
+      .focus__sep {
         display: inline-block; /* inline boxes can't be transformed */
         /* Longhands on purpose — see the note in Highlights.astro. */
         animation-name: focus-read;
         animation-timing-function: linear;
         animation-fill-mode: both;
         animation-timeline: view();
-        animation-range: entry calc(8% + var(--i) * 3%) entry calc(68% + var(--i) * 3%);
+        animation-range: cover 0% cover 16%;
       }
       @keyframes focus-read {
-        from { opacity: 0.14; transform: translate3d(0, 0.3em, 0); }
+        from { opacity: 0.1; transform: translate3d(0, 0.4em, 0); }
         to { opacity: 1; transform: none; }
       }
     }

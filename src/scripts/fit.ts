@@ -26,6 +26,25 @@
 const MAX_PASSES = 4;
 const TOLERANCE = 0.5; // px
 
+/** The scale currently applied to an element by itself and everything above it.
+ *  getBoundingClientRect reports the *transformed* size, but the layout this
+ *  script is fitting to is the untransformed one. With the hero card zooming in
+ *  from small, the name would otherwise be measured at a quarter of its real
+ *  width and sized four times too big. (Translate-only entrances never mattered;
+ *  a scale does.) Read from computed style, which reflects the animation's
+ *  current frame. */
+function scaleOf(el: Element): number {
+  let s = 1;
+  for (let n: Element | null = el; n && n !== document.documentElement; n = n.parentElement) {
+    const t = getComputedStyle(n).transform;
+    if (t && t !== 'none') {
+      const m = new DOMMatrix(t);
+      s *= Math.hypot(m.a, m.b) || 1;
+    }
+  }
+  return s;
+}
+
 function fitLines(container: HTMLElement) {
   const lines = Array.from(container.querySelectorAll<HTMLElement>('[data-fit-line]'));
   if (lines.length === 0) return;
@@ -36,8 +55,9 @@ function fitLines(container: HTMLElement) {
   // Hidden or not laid out yet: nothing to measure. The CSS estimate stands.
   if (!(available > 0)) return;
 
-  const widest = () =>
-    lines.reduce((w, l) => Math.max(w, l.getBoundingClientRect().width), 0);
+  const scale = scaleOf(container);
+  const measure = (l: HTMLElement) => l.getBoundingClientRect().width / scale;
+  const widest = () => lines.reduce((w, l) => Math.max(w, measure(l)), 0);
 
   const ref = Number(container.dataset.fitRef ?? 200);
 
@@ -45,7 +65,7 @@ function fitLines(container: HTMLElement) {
   let size = Infinity;
   lines.forEach((line) => {
     line.style.fontSize = `${ref}px`;
-    const width = line.getBoundingClientRect().width;
+    const width = measure(line);
     if (width > 0) size = Math.min(size, (ref * available) / width);
   });
   if (!Number.isFinite(size)) return;

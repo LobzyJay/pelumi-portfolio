@@ -1,0 +1,48 @@
+---
+// Splits a line of text into words so it can "read in" as you scroll: each word
+// firms up from faint as it rises through the viewport. Words on the same line
+// share a height on the page, so they move together, and the next line follows
+// a beat behind — which is what makes it read line by line, at any width,
+// without measuring anything (a line break is just a change of height).
+//
+// The text is unchanged for everyone else: same words, same spaces, so screen
+// readers, search and copy-and-paste see a normal sentence. Where scroll-linked
+// animation isn't supported, or motion is reduced, the words are simply solid.
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const words = text.split(/\s+/).filter(Boolean);
+---
+
+{words.map((w, i) => (
+  <>
+    <span class="rw">{w}</span>
+    {/* Astro drops whitespace between elements; without real spaces the line
+        could not wrap between words. */}
+    {i < words.length - 1 && ' '}
+  </>
+))}
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .rw {
+        display: inline-block; /* inline boxes can't be transformed */
+        /* Longhands on purpose: the build's minifier merges animation-timeline
+           into the `animation` shorthand, which browsers then reject. */
+        animation-name: read-in;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        /* "cover" runs from the moment a word first appears at the bottom of
+           the screen; 18% of it is about a sixth of a screen of scrolling. */
+        animation-range: cover 0% cover 18%;
+      }
+      @keyframes read-in {
+        from { opacity: 0.12; transform: translate3d(0, 0.4em, 0); }
+        to { opacity: 1; transform: none; }
+      }
+    }
+  }
+</style>

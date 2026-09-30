@@ -4,6 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import HeroShell from '../components/HeroShell.astro';
 import FolioBand from '../components/FolioBand.astro';
 import Icon from '../components/Icon.astro';
+import ReadIn from '../components/ReadIn.astro';
 import { site } from '../data/site';
 import { timeline } from '../data/resume';
 import portrait from '../assets/photos/hero-portrait.jpg';
@@ -36,23 +37,23 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   </HeroShell>
 
   <section class="about pi-wrap">
-    <h2 class="about__lead" data-reveal>{site.positioning}</h2>
+    <h2 class="about__lead"><ReadIn text={site.positioning} /></h2>
 
-    <div class="block" data-reveal>
-      <span class="pi-label pi-label--12 pi-eyebrow">01 Background</span>
-      <p class="about__bio pi-body">{site.backgroundShort}</p>
+    <div class="block">
+      <span class="pi-label pi-label--12 pi-eyebrow" data-reveal>01 Background</span>
+      <p class="about__bio pi-body"><ReadIn text={site.backgroundShort} /></p>
       <p class="about__note pi-body">{site.backgroundNote}</p>
     </div>
 
     <div class="block">
-      <span class="pi-label pi-label--12 pi-eyebrow">02 Education &amp; experience</span>
+      <span class="pi-label pi-label--12 pi-eyebrow" data-reveal>02 Education &amp; experience</span>
       <ol class="timeline">
         {timeline.map((t, i) => (
-          <li class="tl" data-reveal style={`--reveal-delay:${Math.min(i, 5) * 60}ms`}>
+          <li class="tl">
             <span class="tl__date pi-label">{t.dates}</span>
             <div class="tl__body">
-              <h3 class="tl__title">{t.title}</h3>
-              <p class="tl__detail pi-body">{t.detail}</p>
+              <h3 class="tl__title"><ReadIn text={t.title} /></h3>
+              <p class="tl__detail pi-body"><ReadIn text={t.detail} /></p>
             </div>
           </li>
         ))}
@@ -62,7 +63,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
 
   <FolioBand class="places">
     <div class="places__inner">
-      <div class="card card--wide" data-reveal>
+      <div class="card card--wide">
         <span class="card__k pi-label pi-label--12">Places</span>
         <ul class="slashes">
           {site.places.map((p, i) => (
@@ -73,11 +74,11 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
           ))}
         </ul>
       </div>
-      <div class="card" data-reveal style="--reveal-delay:90ms">
+      <div class="card">
         <span class="card__k pi-label pi-label--12">Interests</span>
         <span class="card__v pi-body">{site.interests}</span>
       </div>
-      <div class="card" data-reveal style="--reveal-delay:180ms">
+      <div class="card">
         <span class="card__k pi-label pi-label--12">Off the clock</span>
         <span class="card__v pi-body">{site.offTheClock}</span>
       </div>
@@ -225,6 +226,47 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   }
   .slashes__sep { color: var(--pink); font-weight: 700; }
 
+  /* ---- scroll-driven animation ----
+     The three cards build as the band scrolls into view: each rises and grows
+     to its place, the two lower ones arriving from either side. The dates in
+     the timeline firm up as their row comes in (the words beside them read in
+     via ReadIn). Longhands, not the `animation` shorthand: the build's minifier
+     folds a separate animation-timeline into the shorthand and browsers then
+     reject the lot. Where scroll-driven animation isn't supported, or motion is
+     reduced, everything simply sits in place. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .card {
+        animation-name: card-rise;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 95%;
+        --cx: 0px;
+        --cs: 0.92;
+      }
+      .card--wide { --cs: 0.9; }
+      .card:nth-child(2) { --cx: -48px; }
+      .card:nth-child(3) { --cx: 48px; }
+      @keyframes card-rise {
+        from { opacity: 0; transform: translate3d(var(--cx), 56px, 0) scale(var(--cs)); }
+        to { opacity: 1; transform: none; }
+      }
+
+      .tl__date {
+        animation-name: date-in;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 16%;
+      }
+      @keyframes date-in {
+        from { opacity: 0.12; }
+        to { opacity: 1; }
+      }
+    }
+  }
+
   /* ---- in frame ---- */
   .frame {
     max-width: calc(1600px + var(--gutter) * 2);
@@ -299,6 +341,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     :global(.places) { margin-top: 48px; }
     .places__inner { padding: 40px var(--gutter); grid-template-columns: 1fr; gap: 12px; }
     .card--wide { grid-column: auto; }
+    .card:nth-child(n) { --cx: 0px; }
     .card { padding: 24px; border-radius: 16px; gap: 10px; }
     .card__v { font-size: 17px; line-height: 1.45; }
     .slashes { font-size: 26px; gap: 6px 12px; }

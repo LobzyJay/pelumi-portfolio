@@ -198,7 +198,9 @@ button { font: inherit; color: inherit; }
    - prefers-reduced-motion: none of it. Content is simply there. */
 @media (prefers-reduced-motion: no-preference) {
   .pi-enter {
-    animation: pi-enter 800ms var(--ease-out) var(--enter-delay, 850ms) both;
+    /* +300ms: the words follow the card in, rather than appearing while it is
+       still growing */
+    animation: pi-enter 800ms var(--ease-out) calc(var(--enter-delay, 850ms) + 300ms) both;
   }
   @keyframes pi-enter {
     from { opacity: 0; transform: translate3d(0, 18px, 0); }

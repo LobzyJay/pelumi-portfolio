@@ -24,6 +24,9 @@ const graphics = { 'pi-options': options, 'pi-intercept': intercept, 'pi-plan': 
 // Featured order from the content model: the sharpest memo, the signature
 // theme, and the one real-world deliverable.
 const FEATURED = ['autonomous-targeting', 'cyber-enabled-trafficking', 'shared-hope-field-report'];
+// The span of years the work covers, read from the documents themselves.
+const years = docs.map((d) => d.data.date.getFullYear());
+const span = Math.min(...years) === Math.max(...years) ? `${years[0]}` : `${Math.min(...years)}–${Math.max(...years)}`;
 const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d): d is Doc => Boolean(d));
 ---
 
@@ -32,7 +35,7 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
     <div class="hl__inner">
       <div class="hl__head" data-reveal>
         <h2 class="hl__title">Selected work</h2>
-        <span class="hl__count pi-label pi-label--12">Three of {docs.length} · 2025–2026</span>
+        <span class="hl__count pi-label pi-label--12">{span}</span>
       </div>
 
       <div class="hl__cards">
