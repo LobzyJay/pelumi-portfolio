@@ -61,6 +61,11 @@
   --gap: 24px;
   --nav-top: 20px;
   --nav-h: 64px;
+  /* Inside every hero card: the same padding on all of them, and the contents
+     sit on the card's own 12-column grid (same gap as the page grid), so a
+     heading, a paragraph and a button line up across heroes, not just within one. */
+  --card-x: 56px;
+  --card-y: 48px;
 
   /* motion */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -74,6 +79,8 @@
     --gutter: 16px;
     --nav-top: 12px;
     --nav-h: 56px;
+    --card-x: 24px;
+    --card-y: 28px;
   }
 }
 

@@ -57,12 +57,18 @@ const chars = Math.max(...lines.map((l) => l.length));
     background: var(--ink);
     color: var(--cream);
     border-radius: 32px;
-    padding: 56px 56px 48px;
-    display: flex;
-    flex-direction: column;
+    padding: var(--card-y) var(--card-x);
+    /* The card's own 12-column grid: the name runs the full width on the first
+       row, the pitch and the actions share the second (columns 1-7 and 8-12).
+       No divider between them: the grid does the separating. */
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    grid-template-rows: 1fr auto;
+    row-gap: 56px;
   }
   .hero__stage {
-    flex: 1;
+    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -98,20 +104,20 @@ const chars = Math.max(...lines.map((l) => l.length));
   }
 
   .hero__bar {
-    margin-top: 48px;
-    padding-top: 28px;
-    border-top: 1.5px dashed rgba(251, 168, 238, 0.5);
+    grid-column: 1 / -1;
+    /* inherit the card's columns exactly, rather than redrawing an identical grid */
+    grid-template-columns: subgrid;
     align-items: end;
   }
   .hero__pitch {
-    grid-column: span 7;
+    grid-column: 1 / span 7;
     font-size: 32px;
     line-height: 1.2;
     letter-spacing: -0.015em;
     max-width: 26ch;
   }
   .hero__aside {
-    grid-column: span 5;
+    grid-column: 8 / span 5;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -121,11 +127,12 @@ const chars = Math.max(...lines.map((l) => l.length));
   .hero__meta { color: var(--pink-soft); }
 
   @media (max-width: 1023px) {
-    .hero { border-radius: 24px; padding: 36px 24px 24px; gap: 28px; }
+    .hero { border-radius: 24px; display: flex; flex-direction: column; gap: 28px; }
     .hero__stage { justify-content: flex-start; flex: none; }
     .hero__name { align-items: flex-start; text-align: left; }
     .hero__name:not([data-name-style='caps']) { letter-spacing: -0.05em; }
-    .hero__bar { display: flex; flex-direction: column; align-items: stretch; margin-top: 0; padding-top: 20px; gap: 28px; }
+    .hero__bar { display: flex; flex-direction: column; align-items: stretch; gap: 28px; }
+    .hero__pitch, .hero__aside { grid-column: auto; }
     .hero__pitch { font-size: 22px; max-width: none; text-wrap: pretty; }
     .hero__aside { align-items: stretch; text-align: left; gap: 16px; }
     .hero__meta { font-size: 11px; }

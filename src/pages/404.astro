@@ -34,7 +34,7 @@ import { site } from '../data/site';
     background: var(--ink);
     color: var(--cream);
     border-radius: 32px;
-    padding: 48px 56px 52px;
+    padding: var(--card-y) var(--card-x);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -47,20 +47,19 @@ import { site } from '../data/site';
     line-height: 0.8;
     letter-spacing: -0.05em;
   }
+  /* Same 7 / 5 split as the home hero's pitch and actions. */
   .nf__foot {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 24px;
-    flex-wrap: wrap;
-    padding-top: 28px;
-    border-top: 1.5px dashed rgba(251, 168, 238, 0.5);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
   }
-  .nf__line { font-size: 32px; line-height: 1.2; letter-spacing: -0.015em; }
-  .nf__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .nf__line { grid-column: 1 / span 7; font-size: 32px; line-height: 1.2; letter-spacing: -0.015em; }
+  .nf__actions { grid-column: 8 / span 5; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 
   @media (max-width: 1023px) {
-    .nf { border-radius: 24px; padding: 28px 24px; min-height: 480px; }
+    .nf { border-radius: 24px; min-height: 480px; }
+    .nf__foot { display: flex; flex-direction: column; gap: 20px; align-items: stretch; }
     .nf__line { font-size: 22px; }
     .nf__actions { width: 100%; flex-direction: column; }
     .nf__actions .pi-btn { width: 100%; }
