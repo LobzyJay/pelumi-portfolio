@@ -3,8 +3,10 @@
 // their own light card inside; this only owns the ground, the pattern, the
 // sizing and the big-screen cap.
 //
-// Every hero is exactly one screen tall (100dvh) — the card docks to the
-// bottom of that screen and the pattern fills whatever space is left above it.
+// Every hero is exactly one screen tall (100dvh) — the card keeps its own
+// size and sits in the vertical middle of that screen, pattern showing above
+// and below it, so it stays close to the header on every page regardless of
+// how tall that page's card content happens to be.
 import PatternField from './PatternField.astro';
 
 interface Props {
@@ -40,8 +42,13 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
   }
 
   /* On 1920+ screens the card stops growing and centres; the ground and the
-     pattern keep filling edge to edge. The card sits at the bottom of the
-     frame: the empty space above it is where the pattern lives. */
+     pattern keep filling edge to edge. The card doesn't stretch to fill the
+     frame: it keeps its own size and sits in the vertical middle of it, with
+     the pattern showing in the space both above and below — pinning it to
+     the true bottom left too wide a strip of bare pattern above the card on
+     pages whose card is short (and did nothing to close that gap, since a
+     bottom-pinned child's position is set by the box's bottom edge, not its
+     top padding). */
   .pi-hero__inner {
     position: relative;
     z-index: 1;
@@ -52,7 +59,7 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
   }
 
   /* The card arrives after the lines have started drawing: it comes up out of
