@@ -1,11 +1,10 @@
 ---
-// The pink-to-coral hero ground with the line pattern behind it. Pages put
-// their own dark card inside; this only owns the ground, the pattern, the
+// The dusty-rose hero ground with the line pattern behind it. Pages put
+// their own light card inside; this only owns the ground, the pattern, the
 // sizing and the big-screen cap.
 //
-// Heroes are sized to their content, not the viewport — the cream section
-// starting below the fold is intentional (it signals there is more to
-// scroll). Home is at least 900px tall, inner pages at least 720px.
+// Every hero is exactly one screen tall (100dvh) — the card docks to the
+// bottom of that screen and the pattern fills whatever space is left above it.
 import PatternField from './PatternField.astro';
 
 interface Props {
@@ -30,10 +29,12 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
     overflow: hidden;
     background: var(--hero-ground);
     padding: var(--top) var(--gutter) var(--bottom);
-    /* Every hero is exactly one screen: 900px on desktop, 844px on phones (see
-       the media query below). The card no longer stretches to fill that box —
-       it sits at the bottom, its own size, with the pattern showing above it. */
-    height: 900px;
+    /* Every hero is exactly one screen — the artboards are 1440x900 and
+       390x844, but the real rule is the viewport itself, whatever its height
+       actually is. dvh (not vh) so mobile browser chrome doesn't leave a gap
+       or a scroll sliver. The card no longer stretches to fill that box — it
+       sits at the bottom, its own size, with the pattern showing above it. */
+    height: 100dvh;
     box-sizing: border-box;
     display: flex;
   }
@@ -73,7 +74,6 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
 
   @media (max-width: 1023px) {
     .pi-hero {
-      height: 844px;
       padding: 84px var(--gutter) 24px;
     }
   }
