@@ -30,14 +30,17 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
     overflow: hidden;
     background: var(--hero-ground);
     padding: var(--top) var(--gutter) var(--bottom);
-    min-height: 720px;
+    /* Every hero is exactly one screen: 900px on desktop, 844px on phones (see
+       the media query below). The card no longer stretches to fill that box —
+       it sits at the bottom, its own size, with the pattern showing above it. */
+    height: 900px;
     box-sizing: border-box;
     display: flex;
   }
-  .pi-hero[data-size='home'] { min-height: 900px; }
 
   /* On 1920+ screens the card stops growing and centres; the ground and the
-     pattern keep filling edge to edge. */
+     pattern keep filling edge to edge. The card sits at the bottom of the
+     frame: the empty space above it is where the pattern lives. */
   .pi-hero__inner {
     position: relative;
     z-index: 1;
@@ -48,6 +51,7 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
     min-width: 0;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
   }
 
   /* The card arrives after the lines have started drawing: it comes up out of
@@ -68,10 +72,8 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
   }
 
   @media (max-width: 1023px) {
-    .pi-hero,
-    .pi-hero[data-size='home'] {
-      /* mobile heroes hug their content */
-      min-height: 0;
+    .pi-hero {
+      height: 844px;
       padding: 84px var(--gutter) 24px;
     }
   }
