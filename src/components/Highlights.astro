@@ -87,9 +87,9 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
     font-weight: 400;
     letter-spacing: -0.035em;
     line-height: 1;
-    color: #fff;
+    color: var(--ink);
   }
-  .hl__count { color: #fff; }
+  .hl__count { color: var(--ink); }
 
   .hl__cards {
     display: grid;
@@ -115,12 +115,14 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
     padding: 28px;
     background: var(--cream);
     color: var(--ink);
+    border: 1.5px solid rgba(43, 21, 23, 0.1);
     border-radius: 0 0 20px 20px;
     /* the folded top-right corner */
     clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);
     transition:
       background-color var(--dur) var(--ease),
-      color var(--dur) var(--ease);
+      color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
   }
 
   .card__art {
@@ -177,13 +179,13 @@ const picked = FEATURED.map((slug) => docs.find((d) => d.id === slug)).filter((d
      focus-visible (keyboard) can share it without hover ever sticking on a
      touch screen. */
   @media (hover: hover) and (pointer: fine) {
-    .card:hover .card__face { background: var(--ink); color: var(--cream); }
+    .card:hover .card__face { background: var(--ink); color: var(--cream); border-color: var(--hair-pink); }
     .card:hover .card__art { background: rgba(255, 247, 239, 0.06); }
     .card:hover .card__meta,
     .card:hover .card__title { color: var(--pink-soft); }
     .card:hover .card__foot { border-top-color: var(--hair-pink); }
   }
-  .card:focus-visible .card__face { background: var(--ink); color: var(--cream); }
+  .card:focus-visible .card__face { background: var(--ink); color: var(--cream); border-color: var(--hair-pink); }
   .card:focus-visible .card__art { background: rgba(255, 247, 239, 0.06); }
   .card:focus-visible .card__meta,
   .card:focus-visible .card__title { color: var(--pink-soft); }

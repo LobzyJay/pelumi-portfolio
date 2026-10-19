@@ -1,6 +1,6 @@
 ---
 // Floating nav pill, fixed so it stays over content on scroll. On phones the
-// links collapse behind a "Menu" button that GROWS into a full-screen pink panel.
+// links collapse behind a "Menu" button that GROWS into a full-screen card panel.
 import Icon from './Icon.astro';
 import { site } from '../data/site';
 
@@ -190,39 +190,26 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
   }
 
   /* ---- the header while the menu is open ----------------------------------
-     The glass header stays in view above the menu. Dark glass would disappear
-     against a brown screen, so while the menu is open it turns to a light frost:
-     a faint cream tint, a hairline edge, and the same blur. The pink Menu button
-     (now "Close") stays pink, sitting in it. Eased, so the bar and the button
-     hand over to the menu instead of snapping. */
-  .pi-nav__pill {
-    transition:
-      background-color 280ms var(--ease),
-      box-shadow 280ms var(--ease);
-  }
-  :global(html[data-menu-open]) .pi-nav__pill {
-    background: rgba(255, 247, 239, 0.08);
-    box-shadow:
-      inset 0 0 0 1px rgba(255, 247, 239, 0.16),
-      inset 0 1px 0 rgba(255, 247, 239, 0.22),
-      0 16px 40px rgba(0, 0, 0, 0.28);
-  }
+     The glass header stays in view above the menu. It no longer needs a light
+     frost while the menu is open: the panel it now floats over is the same
+     pale card colour as the rest of the page, and the dark glass pill already
+     reads clearly against it — so the pill simply stays as it always is. */
 
-  /* ---- full-screen menu: a brown card becomes the blade ---------------------
-     The panel is brown, exactly the colour of the page's brown cards. menu.ts
-     finds the brown card that is on screen, lays the panel over that card's
+  /* ---- full-screen menu: a card becomes the blade ---------------------------
+     The panel is the same dusty-card colour as the page's own cards. menu.ts
+     finds the card that is on screen, lays the panel over that card's
      rectangle and radius (--t/--r/--b/--l/--br), and the clip opens out to the
      whole screen. At the first frame the panel *is* the card; the card's text
-     goes because brown covers it, and the card seems to swell into a blank blade.
-     If no brown card is on screen it grows from the Menu button instead.
+     goes because the panel covers it, and the card seems to swell into a blank
+     blade. If no card is on screen it grows from the Menu button instead.
      Strong ease-in-out: a large movement, slow at both ends, quick through the
      middle. */
   .pi-menu {
     position: fixed;
     inset: 0;
     z-index: 20;
-    background: var(--ink);
-    color: var(--cream);
+    background: var(--card);
+    color: var(--ink);
     overflow: hidden;
     /* fallback if the script hasn't measured yet: a pill at the top right */
     --t: 12px; --r: 16px; --b: calc(100dvh - 68px); --l: calc(100vw - 100px); --br: 22px;
@@ -268,9 +255,9 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     letter-spacing: -0.04em;
     padding-block: 6px;
   }
-  .pi-menu__links a[aria-current='page'] { color: var(--pink); }
+  .pi-menu__links a[aria-current='page'] { color: var(--pink-deep); }
   @media (hover: hover) and (pointer: fine) {
-    .pi-menu__links a:hover { color: var(--pink); }
+    .pi-menu__links a:hover { color: var(--pink-deep); }
   }
   .pi-menu__actions { display: flex; flex-direction: column; gap: 10px; }
   .pi-menu__actions .pi-btn { width: 100%; }

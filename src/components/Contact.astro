@@ -58,10 +58,11 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     overflow: hidden;
     border-radius: 40px;
     padding: 72px;
-    background: var(--ink);
-    color: var(--cream);
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--hair);
   }
-  /* The design stacks a fade over the pattern: clear at the top, solid ink by
+  /* The design stacks a fade over the pattern: clear at the top, solid card by
      78%. Done as an overlay so the pattern layer itself can move. */
   .pi-contact__card::after {
     content: '';
@@ -69,7 +70,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(43, 21, 23, 0) 0%, var(--ink) 78%);
+    background: linear-gradient(180deg, rgba(243, 220, 210, 0) 0%, var(--card) 78%);
   }
   .pi-contact__content { position: relative; z-index: 2; }
   .pi-contact__foot span { overflow-wrap: anywhere; }
@@ -83,7 +84,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     align-items: center;
     gap: 8px;
     margin: 0 0 24px;
-    color: var(--pink-soft);
+    color: var(--pink-deep);
   }
   .pi-contact__row {
     display: flex;
@@ -106,8 +107,8 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     gap: 4px 24px;
     margin-top: 76px;
     padding-top: 16px;
-    border-top: 1.5px dashed var(--hair-pink);
-    color: var(--pink-soft);
+    border-top: 1.5px dashed var(--hair);
+    color: var(--pink-deep);
   }
 
   @media (max-width: 1023px) {

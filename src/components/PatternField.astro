@@ -139,14 +139,17 @@ const { variant = 'links', animate = true } = Astro.props;
     top: 0;
     overflow: visible;
   }
-  .pf-line { fill: none; stroke: #fff7ef; stroke-width: 1.5; }
-  .pf-line--rail { stroke-opacity: 0.42; }
-  .pf-line--route { stroke-opacity: 0.55; stroke-linecap: round; }
-  .pf-dot { fill: #fff7ef; fill-opacity: 0.8; }
+  /* Against the now-pale dusty ground the drawn lines read as etched strokes
+     (ink-toned), not bright threads; the travelling light stays brand pink —
+     a highlight glint, same as the buttons and icon accents. */
+  .pf-line { fill: none; stroke: var(--plum); stroke-width: 1.5; }
+  .pf-line--rail { stroke-opacity: 0.22; }
+  .pf-line--route { stroke-opacity: 0.3; stroke-linecap: round; }
+  .pf-dot { fill: var(--plum); fill-opacity: 0.4; }
 
   .pf-sig {
     fill: none;
-    stroke: #fff7ef;
+    stroke: var(--pink);
     stroke-linecap: round;
     stroke-linejoin: round;
     /* one dash, then a gap longer than any path */
@@ -194,11 +197,11 @@ const { variant = 'links', animate = true } = Astro.props;
     100% { stroke-dashoffset: var(--o1); opacity: 0; }
   }
 
-  /* Footer: a slow light traces the arches. Quieter: it sits on a dark card. */
+  /* Footer: a slow light traces the arches. Quieter: kept subtle by opacity,
+     not by dimming the pink itself (the card it sits on is light now). */
   .pf-arch .pf-sig { animation: pf-run-slow var(--T) linear infinite; animation-delay: calc(0s - var(--d)); }
-  .pf--tile .pf-sig { stroke: #fba8ee; }
-  .pf--tile .pf-tail { stroke-opacity: 0.12; stroke-width: 3px; }
-  .pf--tile .pf-head { stroke-opacity: 0.35; stroke-width: 2px; }
+  .pf--tile .pf-tail { stroke-opacity: 0.16; stroke-width: 3px; }
+  .pf--tile .pf-head { stroke-opacity: 0.45; stroke-width: 2px; }
   @keyframes pf-run-slow {
     0% { stroke-dashoffset: var(--o0); opacity: 0; }
     6% { opacity: 1; }

@@ -76,12 +76,13 @@ const preview = d.previewImage ? images[`../assets/documents/${d.previewImage}.p
   @media (max-width: 1023px) {
     .doc { display: flex; flex-direction: column; gap: 12px; }
     .doc__figure {
-      background: var(--ink);
+      background: var(--card);
+      border: 1.5px solid var(--hair);
       border-radius: 18px;
       padding: 20px;
     }
     .doc__figure :global(img) { border-radius: 6px; }
-    .doc__pending { border-color: rgba(255, 247, 239, 0.4); color: var(--cream); border-radius: 6px; }
+    .doc__pending { border-color: var(--hair-strong); color: var(--ink); border-radius: 6px; }
     .doc__meta { align-items: stretch; gap: 12px; }
     .doc__meta > .pi-label--12 { display: none; }
     .doc__meta .pi-btn { width: 100%; }

@@ -107,8 +107,9 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   .intro {
     flex: 1;
     position: relative;
-    background: var(--ink);
-    color: var(--cream);
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--hair);
     border-radius: 20px;
     padding: var(--card-y) var(--card-x);
     /* The card's 12-column grid. The kicker takes columns 1-8, the portrait the
@@ -120,7 +121,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     grid-template-rows: auto 1fr auto;
     row-gap: 28px;
   }
-  .intro__top { grid-column: 1 / span 8; grid-row: 1; color: var(--pink); }
+  .intro__top { grid-column: 1 / span 8; grid-row: 1; color: var(--pink-deep); }
   .intro__kicker-m, .intro__city { display: none; }
   /* The ring and the clip belong to the frame; the photo inside it is free to
      zoom on hover without ever growing past the ring. */
@@ -157,7 +158,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     gap: 6px;
     font-size: 19px;
   }
-  .intro__degree { color: var(--pink-soft); }
+  .intro__degree { color: var(--pink-deep); }
 
   /* ---- body ---- */
   .about {
@@ -210,6 +211,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
   }
   .card {
     background: var(--cream);
+    border: 1.5px solid rgba(43, 21, 23, 0.1);
     border-radius: 16px;
     padding: 32px;
     display: flex;
@@ -227,7 +229,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     font-size: 40px;
     letter-spacing: -0.025em;
   }
-  .slashes__sep { color: var(--pink); font-weight: 700; }
+  .slashes__sep { color: var(--pink-deep); font-weight: 700; }
 
   /* ---- scroll-driven animation ----
      The three cards build as the band scrolls into view: each rises and grows
@@ -356,7 +358,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     .intro__top { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; }
     .intro__kicker { display: none; }
     .intro__kicker-m { display: inline; }
-    .intro__city { display: inline; color: var(--pink-soft); }
+    .intro__city { display: inline; color: var(--pink-deep); }
     .intro__portrait {
       align-self: center;
       justify-self: auto;

@@ -54,8 +54,9 @@ const chars = Math.max(...lines.map((l) => l.length));
 <style>
   .hero {
     flex: 1;
-    background: var(--ink);
-    color: var(--cream);
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--hair);
     border-radius: 32px;
     padding: var(--card-y) var(--card-x);
     /* The card's own 12-column grid: the name runs the full width on the first
@@ -124,7 +125,7 @@ const chars = Math.max(...lines.map((l) => l.length));
     gap: 20px;
     text-align: right;
   }
-  .hero__meta { color: var(--pink-soft); }
+  .hero__meta { color: var(--pink-deep); }
 
   @media (max-width: 1023px) {
     .hero { border-radius: 24px; display: flex; flex-direction: column; gap: 28px; }

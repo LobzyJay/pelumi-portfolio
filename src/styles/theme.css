@@ -43,14 +43,25 @@
   --press-cream: #f6e6dc; /* one step darker than cream, for :active */
   --press-ink: #3a1d20;   /* one step darker than ink, for :active */
 
+  /* Dusty Rose: the plain, light card surface that replaced ink as every
+     hero/section card's background. Ink stays the text colour; this is purely
+     a fill. --card-deep is one step warmer/deeper, for the folio ground and
+     the hero ground's base; --dune deeper still, for gradient bottoms; --mist
+     the palest wash, for gradient tops. Pink and ink remain as highlights
+     (buttons, numerals, the nav pill, accent chips) — never as a main ground. */
+  --card: #f3dcd2;
+  --card-deep: #e8c3b4;
+  --dune: #d9a68b;
+  --mist: #f8e7df;
+
   --hair: rgba(43, 21, 23, 0.25);
   --hair-strong: rgba(43, 21, 23, 0.3);
   --hair-pink: rgba(251, 168, 238, 0.45);
 
-  /* the hero ground, shared by every page */
+  /* the hero ground, shared by every page — a pale dusty wash, not a vivid one */
   --hero-ground:
-    radial-gradient(circle at 92% 0%, var(--pink-soft) 0%, rgba(251, 168, 238, 0) 42%),
-    linear-gradient(120deg, var(--blush) 0%, var(--salmon) 55%, var(--coral) 100%);
+    radial-gradient(circle at 92% 0%, var(--mist) 0%, rgba(248, 231, 223, 0) 42%),
+    linear-gradient(120deg, var(--mist) 0%, var(--card) 55%, var(--dune) 100%);
 
   /* type */
   --font-display: 'Archivo', system-ui, sans-serif;
@@ -181,12 +192,14 @@ button { font: inherit; color: inherit; }
 }
 .pi-btn--pink { background: var(--pink); color: var(--ink); }
 .pi-btn--ink { background: var(--ink); color: var(--cream); }
-.pi-btn--outline { border-color: var(--cream); color: var(--cream); }
+/* Every outline button now sits on a light card (the dark cards it used to
+   sit on are gone), so it is ink-on-light rather than cream-on-dark. */
+.pi-btn--outline { border-color: var(--ink); color: var(--ink); }
 
 @media (hover: hover) and (pointer: fine) {
   .pi-btn--pink:hover { background: var(--pink-soft); }
   .pi-btn--ink:hover { background: var(--plum); }
-  .pi-btn--outline:hover { background: var(--cream); color: var(--ink); }
+  .pi-btn--outline:hover { background: var(--ink); color: var(--card); }
 }
 .pi-btn:active { transform: scale(0.98); }
 

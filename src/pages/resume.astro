@@ -128,10 +128,10 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     margin-inline: auto;
     padding-top: 108px;
   }
-  .head { border-radius: 20px; overflow: hidden; background: var(--ink); color: var(--cream); }
+  .head { border-radius: 20px; overflow: hidden; background: var(--card); color: var(--ink); border: 1.5px solid var(--hair); }
   .head__strip {
     height: 180px;
-    background: var(--salmon) url('../assets/pattern/pi-arches.svg') bottom center / cover no-repeat;
+    background: var(--card-deep) url('../assets/pattern/pi-arches.svg') bottom center / cover no-repeat;
   }
   .head__body {
     padding: 40px 56px 48px;
@@ -141,7 +141,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     gap: 32px;
   }
   .head__title { display: flex; flex-direction: column; gap: 16px; }
-  .head__kicker { color: var(--pink-soft); }
+  .head__kicker { color: var(--pink-deep); }
   .head__word {
     font-size: clamp(96px, 11vw, 160px);
     font-weight: 400;
@@ -149,7 +149,7 @@ const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent(site
     letter-spacing: -0.045em;
   }
   .head__actions { display: flex; flex-direction: column; align-items: flex-end; gap: 14px; }
-  .head__by { color: var(--pink-soft); }
+  .head__by { color: var(--pink-deep); }
 
   /* ---- body ---- */
   .cv {

@@ -164,8 +164,9 @@ const eyebrow = `${pad(d.order)} · ${d.format} · ${d.dateLabel}`;
   /* ---- hero ---- */
   .memo {
     flex: 1;
-    background: var(--ink);
-    color: var(--cream);
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--hair);
     border-radius: 20px;
     padding: var(--card-y) var(--card-x);
     display: flex;
@@ -175,7 +176,7 @@ const eyebrow = `${pad(d.order)} · ${d.format} · ${d.dateLabel}`;
     gap: 28px;
     text-align: center;
   }
-  .memo__eyebrow { display: flex; align-items: center; gap: 8px; color: var(--pink); }
+  .memo__eyebrow { display: flex; align-items: center; gap: 8px; color: var(--pink-deep); }
   .memo__question {
     font-size: clamp(48px, 5.6vw, 80px);
     font-weight: 400;
@@ -194,11 +195,12 @@ const eyebrow = `${pad(d.order)} · ${d.format} · ${d.dateLabel}`;
     font-size: 20px;
   }
   .memo__route span { display: flex; align-items: center; gap: 8px; }
-  .memo__slash { color: var(--pink); font-weight: 700; }
+  .memo__slash { color: var(--pink-deep); font-weight: 700; }
 
   .note {
     margin-top: 16px;
     background: var(--cream);
+    border: 1.5px solid var(--hair);
     border-radius: 14px;
     padding: 16px 22px;
     display: flex;

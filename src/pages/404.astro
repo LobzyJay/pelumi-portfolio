@@ -31,8 +31,9 @@ import { site } from '../data/site';
 <style>
   .nf {
     flex: 1;
-    background: var(--ink);
-    color: var(--cream);
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--hair);
     border-radius: 32px;
     padding: var(--card-y) var(--card-x);
     display: flex;
@@ -40,7 +41,7 @@ import { site } from '../data/site';
     justify-content: space-between;
     gap: 32px;
   }
-  .nf__k { color: var(--pink); }
+  .nf__k { color: var(--pink-deep); }
   .nf__code {
     font-size: clamp(160px, 26vw, 380px);
     font-weight: 400;

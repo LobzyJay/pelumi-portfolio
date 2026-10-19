@@ -62,8 +62,9 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
   /* ---- hero card ---- */
   .wk {
     flex: 1;
-    background: var(--ink);
-    color: var(--cream);
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--hair);
     border-radius: 32px;
     padding: var(--card-y) var(--card-x);
     display: grid;
@@ -87,13 +88,13 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
     justify-content: space-between;
     gap: 16px;
     padding: 10px 0;
-    border-top: 1.5px dashed rgba(251, 168, 238, 0.35);
+    border-top: 1.5px dashed var(--hair);
     font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.4;
     transition: background-color var(--dur) var(--ease);
   }
-  .theme__n { color: var(--pink-soft); }
+  .theme__n { color: var(--pink-deep); }
   @media (hover: hover) and (pointer: fine) {
     .theme:hover { background: rgba(244, 107, 200, 0.12); }
   }
@@ -125,7 +126,7 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
       justify-content: space-between;
       align-items: baseline;
       gap: 12px;
-      color: var(--pink);
+      color: var(--pink-deep);
     }
     .wk__word {
       font-size: clamp(132px, 34vw, 240px);
