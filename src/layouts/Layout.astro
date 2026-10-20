@@ -17,6 +17,8 @@ interface Props {
 }
 const { title, description, contact = true, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+const pageTitle = `${title} — ${site.name}`;
 ---
 
 <!doctype html>
@@ -27,13 +29,30 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
          lines can wait to be drawn instead of flashing on. -->
     <script is:inline>document.documentElement.classList.add('js');</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} — {site.name}</title>
+    <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- Matches the top of every hero, so browser chrome blends into the page. -->
-    <meta name="theme-color" content="#f58cb6" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Matches the dusty-rose hero ground, so browser chrome blends into the page. -->
+    <meta name="theme-color" content="#f3dcd2" />
+
+    <!-- Open Graph / Twitter: a card showing her name, title and positioning,
+         built in the site's own type and colours. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <!-- The two faces above the fold, fetched early so text does not reflow. -->
     <link rel="preload" href={archivo} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={interTight} as="font" type="font/woff2" crossorigin />
