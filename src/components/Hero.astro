@@ -128,7 +128,7 @@ const chars = Math.max(...lines.map((l) => l.length));
   .hero__meta { color: var(--pink-deep); }
 
   @media (max-width: 1023px) {
-    .hero { border-radius: 24px; display: flex; flex-direction: column; gap: 20px; }
+    .hero { flex: none; border-radius: 24px; display: flex; flex-direction: column; gap: 20px; }
     .hero__stage { justify-content: flex-start; flex: none; }
     .hero__name { align-items: flex-start; text-align: left; }
     .hero__name:not([data-name-style='caps']) { letter-spacing: -0.05em; }

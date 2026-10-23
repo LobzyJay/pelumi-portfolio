@@ -5,9 +5,11 @@
 //
 // On desktop every hero is exactly one screen tall (100dvh), and the card
 // fills it — same height on every page, exactly like the home hero. On
-// phones the hero hugs its own content instead, so the next section already
-// shows at the bottom of the frame. Pages put their own card inside; this
-// only owns the ground, the pattern, the sizing and the big-screen cap.
+// phones every hero is the same FIXED height instead (not the viewport, and
+// not each page's own content height) — the card keeps its own size and
+// sticks to the bottom of that frame, so the pattern fills whatever is left
+// above it. Pages put their own card inside; this only owns the ground, the
+// pattern, the sizing and the big-screen cap.
 import PatternField from './PatternField.astro';
 
 interface Props {
@@ -77,11 +79,16 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
 
   @media (max-width: 1023px) {
     .pi-hero {
-      /* Phones hug their content instead of filling the screen: the next
-         section is meant to already show at the bottom of the frame. Only
-         desktop is held to the exact one-screen rule. */
-      height: auto;
+      /* One fixed height on every page — not each page's own content height,
+         which was leaving every hero a different size depending on how tall
+         that page's card happened to be. */
+      height: 520px;
       padding: 84px var(--gutter) 24px;
     }
+    /* The card doesn't stretch to fill this box: it sticks to the bottom,
+       its own size, with the pattern showing above it. Each card's own
+       mobile rules set `flex: none` so flex:1 (desktop's fill-the-box rule)
+       doesn't fight this. */
+    .pi-hero__inner { justify-content: flex-end; }
   }
 </style>
