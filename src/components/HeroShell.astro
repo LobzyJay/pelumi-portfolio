@@ -3,10 +3,11 @@
 // their own light card inside; this only owns the ground, the pattern, the
 // sizing and the big-screen cap.
 //
-// Every hero is exactly one screen tall (100dvh), and the card fills it —
-// same height on every page, exactly like the home hero. Pages put their own
-// card inside; this only owns the ground, the pattern, the sizing and the
-// big-screen cap.
+// On desktop every hero is exactly one screen tall (100dvh), and the card
+// fills it — same height on every page, exactly like the home hero. On
+// phones the hero hugs its own content instead, so the next section already
+// shows at the bottom of the frame. Pages put their own card inside; this
+// only owns the ground, the pattern, the sizing and the big-screen cap.
 import PatternField from './PatternField.astro';
 
 interface Props {
@@ -76,6 +77,10 @@ const { size = 'page', top = 108, bottom = 48 } = Astro.props;
 
   @media (max-width: 1023px) {
     .pi-hero {
+      /* Phones hug their content instead of filling the screen: the next
+         section is meant to already show at the bottom of the frame. Only
+         desktop is held to the exact one-screen rule. */
+      height: auto;
       padding: 84px var(--gutter) 24px;
     }
   }
