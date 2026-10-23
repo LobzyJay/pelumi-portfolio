@@ -1,0 +1,157 @@
+---
+// TEMPORARY — font A/B toggle for Pelumi to compare Archivo vs Faculty
+// Glyphic as the display face. Lives only on the `font-trial` branch; never
+// merge this into main. Styled deliberately unlike the rest of the site (a
+// dark native-menu-style control) so it reads as a tool, not a design
+// decision that shipped by accident.
+const OPTIONS = [
+  { id: 'archivo', label: 'Archivo' },
+  { id: 'faculty', label: 'Faculty Glyphic' },
+] as const;
+---
+
+<div class="font-trial" data-font-trial-widget>
+  <button class="font-trial__toggle" type="button" aria-haspopup="true" aria-expanded="false" data-font-trial-toggle>
+    <span data-font-trial-current>Archivo</span>
+    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+      <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+  <div class="font-trial__menu" role="menu" data-font-trial-menu hidden>
+    {OPTIONS.map((o) => (
+      <button class="font-trial__item" type="button" role="menuitemradio" data-font-trial-option={o.id}>
+        <span class="font-trial__check" aria-hidden="true">✓</span>
+        <span>{o.label}</span>
+      </button>
+    ))}
+  </div>
+</div>
+
+<style>
+  /* Deliberately not using the site's own tokens — this should never look
+     like it belongs to the design. */
+  .font-trial {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .font-trial__toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(28, 28, 30, 0.92);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+  .font-trial__toggle::before {
+    content: 'FONT TEST';
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-right: 2px;
+  }
+  .font-trial__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 170px;
+    background: rgba(40, 40, 42, 0.96);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 4px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  }
+  .font-trial__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: none;
+    border: 0;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    text-align: left;
+    padding: 7px 8px;
+    cursor: pointer;
+  }
+  .font-trial__item:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .font-trial__check {
+    width: 14px;
+    flex-shrink: 0;
+    opacity: 0;
+    font-size: 12px;
+  }
+  .font-trial__item[aria-checked='true'] .font-trial__check {
+    opacity: 1;
+  }
+</style>
+
+<style is:global>
+  /* The actual A/B switch: overrides the site's display-face token. Scoped
+     here, not in theme.css, so the whole experiment lives in this one file
+     and is trivial to delete later. */
+  html[data-font-trial='faculty'] {
+    --font-display: 'Faculty Glyphic', serif;
+  }
+</style>
+
+<script>
+  const STORAGE_KEY = 'pi-font-trial';
+  const widget = document.querySelector<HTMLElement>('[data-font-trial-widget]');
+  const toggle = widget?.querySelector<HTMLButtonElement>('[data-font-trial-toggle]');
+  const menu = widget?.querySelector<HTMLElement>('[data-font-trial-menu]');
+  const current = widget?.querySelector<HTMLElement>('[data-font-trial-current]');
+  const options = widget?.querySelectorAll<HTMLButtonElement>('[data-font-trial-option]');
+  if (widget && toggle && menu && current && options) {
+    const labels: Record<string, string> = { archivo: 'Archivo', faculty: 'Faculty Glyphic' };
+
+    const apply = (id: string) => {
+      document.documentElement.dataset.fontTrial = id;
+      current.textContent = labels[id] ?? labels.archivo;
+      options.forEach((o) => o.setAttribute('aria-checked', String(o.dataset.fontTrialOption === id)));
+    };
+
+    const stored = localStorage.getItem(STORAGE_KEY);
+    apply(stored === 'faculty' ? 'faculty' : 'archivo');
+
+    const closeMenu = () => {
+      menu.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    toggle.addEventListener('click', () => {
+      const willOpen = menu.hidden;
+      menu.hidden = !willOpen;
+      toggle.setAttribute('aria-expanded', String(willOpen));
+    });
+
+    options.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.fontTrialOption ?? 'archivo';
+        apply(id);
+        localStorage.setItem(STORAGE_KEY, id);
+        closeMenu();
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!widget.contains(e.target as Node)) closeMenu();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+  }
+</script>

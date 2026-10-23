@@ -3,6 +3,8 @@
 import '../styles/theme.css';
 import Nav from '../components/Nav.astro';
 import Contact from '../components/Contact.astro';
+// TEMPORARY — font A/B trial, `font-trial` branch only. See FontTrial.astro.
+import FontTrial from '../components/FontTrial.astro';
 import { site } from '../data/site';
 import archivo from '../assets/fonts/archivo-variable.woff2?url';
 import interTight from '../assets/fonts/inter-tight-variable.woff2?url';
@@ -28,6 +30,18 @@ const pageTitle = `${title} — ${site.name}`;
     <!-- Runs before first paint: lets CSS know script is available, so the hero
          lines can wait to be drawn instead of flashing on. -->
     <script is:inline>document.documentElement.classList.add('js');</script>
+    <!-- TEMPORARY — restores the font-trial pick before first paint, so
+         reloading on "Faculty Glyphic" doesn't flash Archivo first. -->
+    <script is:inline>
+      try {
+        const f = localStorage.getItem('pi-font-trial');
+        if (f === 'faculty') document.documentElement.dataset.fontTrial = 'faculty';
+      } catch {}
+    </script>
+    <!-- TEMPORARY — Faculty Glyphic for the font trial only. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&display=swap" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
@@ -59,6 +73,7 @@ const pageTitle = `${title} — ${site.name}`;
   </head>
   <body>
     <a class="pi-skip" href="#main">Skip to content</a>
+    <FontTrial />
     <Nav />
     <main id="main">
       <slot />
