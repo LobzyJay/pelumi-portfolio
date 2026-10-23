@@ -19,6 +19,26 @@ const { title, description, contact = true, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/og.png', Astro.site).href;
 const pageTitle = `${title} — ${site.name}`;
+
+// Structured data: tells Google who she is, what she does and where, so
+// search results can show that directly rather than guessing from prose.
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  alternateName: site.legalName,
+  url: Astro.site?.href,
+  image: new URL('/og.png', Astro.site).href,
+  jobTitle: 'Global Policy Analyst',
+  description: site.positioning,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Washington',
+    addressRegion: 'DC',
+    addressCountry: 'US',
+  },
+  sameAs: [site.contact.linkedin],
+};
 ---
 
 <!doctype html>
@@ -53,6 +73,9 @@ const pageTitle = `${title} — ${site.name}`;
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <!-- Structured data: who she is, what she does, where — lets Google show
+         this directly in results instead of guessing from page text. -->
+    <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
     <!-- The two faces above the fold, fetched early so text does not reflow. -->
     <link rel="preload" href={archivo} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={interTight} as="font" type="font/woff2" crossorigin />
@@ -70,5 +93,12 @@ const pageTitle = `${title} — ${site.name}`;
       initPatterns();
       initReveal();
     </script>
+    <!-- Vercel Web Analytics — the dependency-free snippet, since this is a
+         plain static build with no Vercel adapter. Only collects data once
+         "Web Analytics" is turned on for the project in the Vercel dashboard. -->
+    <script is:inline>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script is:inline defer src="/_vercel/insights/script.js"></script>
   </body>
 </html>
