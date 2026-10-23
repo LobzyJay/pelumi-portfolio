@@ -137,11 +137,11 @@ const chars = Math.max(...lines.map((l) => l.length));
        look). fit.ts sets the fitted size as an inline style, which beats any
        plain CSS rule, so this needs !important to actually win on phones. */
     .hero__name [data-fit-line] {
-      font-size: clamp(36px, 10vw, 48px) !important;
+      font-size: clamp(46px, 13vw, 64px) !important;
     }
     .hero__bar { display: flex; flex-direction: column; align-items: stretch; gap: 20px; }
     .hero__pitch, .hero__aside { grid-column: auto; }
-    .hero__pitch { font-size: 20px; max-width: none; text-wrap: pretty; }
+    .hero__pitch { font-size: 24px; max-width: none; text-wrap: pretty; }
     .hero__aside { align-items: stretch; text-align: left; gap: 12px; }
     .hero__meta { font-size: 11px; }
     .hero__aside .pi-btn { width: 100%; }
