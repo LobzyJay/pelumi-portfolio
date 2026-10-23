@@ -114,11 +114,10 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
   @media (max-width: 1023px) {
     .wk {
       border-radius: 24px;
-      min-height: 520px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 40px;
+      gap: 20px;
       align-items: stretch;
     }
     .wk__top {
@@ -129,14 +128,14 @@ const rows = themes.map((t) => ({ id: t.id, title: t.title, numbers: themeNumber
       color: var(--pink-deep);
     }
     .wk__word {
-      font-size: clamp(132px, 34vw, 240px);
+      font-size: clamp(90px, 26vw, 160px);
       letter-spacing: -0.055em;
       margin-left: -6px;
       order: 2;
     }
-    .wk__side { order: 3; gap: 24px; }
+    .wk__side { order: 3; gap: 16px; }
     .wk__lede {
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1.5;
     }
     .wk__themes { display: none; }

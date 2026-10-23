@@ -354,7 +354,7 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
      one column and the portrait centres above the heading. From tablet width up
      it stays in the top-right corner, as on desktop. */
   @media (max-width: 599px) {
-    .intro { display: flex; flex-direction: column; gap: 24px; }
+    .intro { display: flex; flex-direction: column; gap: 16px; }
     .intro__top { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; }
     .intro__kicker { display: none; }
     .intro__kicker-m { display: inline; }
@@ -362,9 +362,13 @@ import studio from '../assets/photos/studio-portrait-wide.jpg';
     .intro__portrait {
       align-self: center;
       justify-self: auto;
-      width: 200px;
-      height: 200px;
-      margin-block: 8px;
+      width: 140px;
+      height: 140px;
+      margin-block: 4px;
+      box-shadow: 0 0 0 4px var(--pink);
     }
+    .intro__bottom { gap: 14px; }
+    .intro__line { font-size: clamp(30px, 8vw, 38px); }
+    .intro__who { font-size: 15px; }
   }
 </style>
