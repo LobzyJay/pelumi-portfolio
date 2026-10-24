@@ -1,14 +1,16 @@
 /* Pink Identity — tokens, fonts, base and the primitives every page shares.
    Component-specific styling lives in each component's own <style>.
 
-   Two faces only: Archivo for display type, Inter Tight for everything you
-   read. (The earlier mono face appears nowhere in the design.) */
+   Two faces: Faculty Glyphic for display type (the client's final pick,
+   replacing Archivo), Inter Tight for everything you read. Faculty Glyphic
+   ships as a single static weight (400, no variable axes) — unlike Archivo
+   it can't do the heavy/condensed "caps" hero treatment, but that style
+   isn't in active use (site.heroNameStyle is 'regular'). */
 
 @font-face {
-  font-family: 'Archivo';
-  src: url('../assets/fonts/archivo-variable.woff2') format('woff2-variations');
-  font-weight: 400 900;
-  font-stretch: 62% 125%;
+  font-family: 'Faculty Glyphic';
+  src: url('../assets/fonts/faculty-glyphic.woff2') format('woff2');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -64,7 +66,7 @@
     linear-gradient(120deg, var(--mist) 0%, var(--card) 55%, var(--dune) 100%);
 
   /* type */
-  --font-display: 'Archivo', system-ui, sans-serif;
+  --font-display: 'Faculty Glyphic', system-ui, serif;
   --font-body: 'Inter Tight', system-ui, sans-serif;
 
   /* layout */

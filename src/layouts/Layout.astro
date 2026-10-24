@@ -4,7 +4,7 @@ import '../styles/theme.css';
 import Nav from '../components/Nav.astro';
 import Contact from '../components/Contact.astro';
 import { site } from '../data/site';
-import archivo from '../assets/fonts/archivo-variable.woff2?url';
+import facultyGlyphic from '../assets/fonts/faculty-glyphic.woff2?url';
 import interTight from '../assets/fonts/inter-tight-variable.woff2?url';
 
 interface Props {
@@ -77,7 +77,7 @@ const personJsonLd = {
          this directly in results instead of guessing from page text. -->
     <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
     <!-- The two faces above the fold, fetched early so text does not reflow. -->
-    <link rel="preload" href={archivo} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={facultyGlyphic} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={interTight} as="font" type="font/woff2" crossorigin />
   </head>
   <body>
